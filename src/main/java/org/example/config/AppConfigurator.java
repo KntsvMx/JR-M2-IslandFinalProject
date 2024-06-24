@@ -1,4 +1,4 @@
 package org.example.config;
 
-public class Config {
+public class AppConfigurator {
 }
