@@ -1,5 +1,7 @@
 package org.example.entities.interfaces;
 
-public interface Organism extends GameObject, Reproducible {
+import org.example.abstraction.interfaces.GameObject;
+
+public interface Organism extends GameObject {
 
 }
