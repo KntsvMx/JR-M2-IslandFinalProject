@@ -3,7 +3,6 @@ package org.example.entities.animals.abstractions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.example.entities.interfaces.Eatable;
 import org.example.entities.interfaces.Movable;
 import org.example.entities.interfaces.Organism;
 import org.example.entities.limits.Limits;
@@ -15,7 +14,7 @@ import org.example.entities.map.Cell;
 @EqualsAndHashCode
 @ToString
 
-public abstract class Animal implements Organism, Movable, Eatable {
+public abstract class Animal implements Organism, Movable{
     private static long serialUID = 1L;
 
     @Builder.Default
@@ -37,13 +36,6 @@ public abstract class Animal implements Organism, Movable, Eatable {
         // TODO: add implementation
     }
 
-    public void eat() {
-
-    }
-
-    public void findFood() {
-
-    }
 
     public void move() {
 
