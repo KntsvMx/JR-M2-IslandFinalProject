@@ -1,4 +1,4 @@
 package org.example.entities.interfaces;
 
-public interface Entity {
+public interface GameObject {
 }
