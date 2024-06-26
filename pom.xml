@@ -48,6 +48,11 @@
             <version>0.10.2</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>24.0.0</version>
+        </dependency>
 
     </dependencies>
 </project>
