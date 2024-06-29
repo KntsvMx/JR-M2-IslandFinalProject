@@ -3,6 +3,8 @@ package org.example.config;
 import org.example.abstraction.annotations.Config;
 import org.example.abstraction.annotations.GameObjectEntity;
 import org.example.abstraction.interfaces.GameObject;
+import org.example.entities.map.GameField;
+import org.example.exceptions.InitGameException;
 import org.reflections.Reflections;
 
 import java.util.Set;
@@ -29,5 +31,13 @@ public class GameObjectScanner {
                 .filter(c -> c.isAnnotationPresent(GameObjectEntity.class))
                 .filter(c -> c.isAnnotationPresent(Config.class))
                 .collect(Collectors.toSet());
+    }
+
+    public Class<? extends GameField> getGameFieldClass() {
+        return reflections.getSubTypesOf(GameField.class)
+                .stream()
+                .filter(c -> c.isAnnotationPresent(Config.class))
+                .findFirst()
+                .orElseThrow(() -> new InitGameException("GameField must have @Config annotation"));
     }
 }
