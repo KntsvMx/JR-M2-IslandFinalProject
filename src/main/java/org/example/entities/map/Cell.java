@@ -17,7 +17,7 @@ public class Cell {
     @Builder.Default
     private final long UID = serialUID++;
 
-    private final Map<Class<? extends GameObject>, Set<GameObject>> residents;
+    private final Map<Class<? extends GameObject>, List<GameObject>> residents;
 
     private final List<Cell> nextCells = new ArrayList<>();
 
