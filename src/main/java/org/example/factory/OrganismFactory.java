@@ -1,9 +1,11 @@
 package org.example.factory;
 
+import lombok.Getter;
 import org.example.abstraction.interfaces.GameObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class OrganismFactory implements PrototypeFactory<GameObject> {
     private static OrganismFactory instance;
@@ -29,5 +31,9 @@ public class OrganismFactory implements PrototypeFactory<GameObject> {
             throw new IllegalArgumentException();
         }
         return prototypes.get(type).reproduce();
+    }
+
+    public Set<Class<? extends GameObject>> getPrototypes() {
+        return prototypes.keySet();
     }
 }
