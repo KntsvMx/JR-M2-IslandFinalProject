@@ -8,6 +8,7 @@ import org.example.entities.interfaces.Movable;
 import org.example.entities.interfaces.Organism;
 import org.example.entities.limits.Limits;
 import org.example.entities.map.Cell;
+import org.example.entities.target.Target;
 
 import java.util.List;
 import java.util.Random;
@@ -28,6 +29,7 @@ public abstract class Animal implements Organism, Movable {
     private Cell cell;
 
     private Limits limits;
+    private Target target;
 
     private String icon;
     private boolean isAlive = true;
