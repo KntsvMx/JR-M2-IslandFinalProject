@@ -11,10 +11,10 @@ import org.example.entities.map.Cell;
 import org.example.entities.target.Target;
 
 import java.util.List;
-import java.util.Random;
 
 @NoArgsConstructor
 @SuperBuilder
+@Setter
 @Getter
 @EqualsAndHashCode
 @ToString
@@ -46,8 +46,13 @@ public abstract class Animal implements Organism, Movable {
         if (isEnoughHealth()) {
             currentCell = cell.getRandomCell();
             currentCell.addNewResident(getObjectClass(), getGameObject());
-            removeGameObject();
+            changeHealthAfterMove();
+            removeGameObjectFromCell();
         }
+    }
+
+    private void changeHealthAfterMove() {
+        health = (health * 5) / 100;
     }
 
     private boolean isEnoughHealth() {
@@ -67,7 +72,7 @@ public abstract class Animal implements Organism, Movable {
         return this.getClass();
     }
 
-    private void removeGameObject() {
+    public void removeGameObjectFromCell() {
         cell.getResidents().get(getObjectClass()).remove(getGameObject());
     }
 }
