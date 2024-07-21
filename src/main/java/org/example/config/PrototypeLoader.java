@@ -1,11 +1,8 @@
 package org.example.config;
 
-import com.fasterxml.jackson.core.exc.StreamReadException;
-import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import org.example.abstraction.annotations.Config;
-import org.example.abstraction.interfaces.GameObject;
 import org.example.exceptions.InitGameException;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,7 +11,7 @@ import java.net.URL;
 
 public class PrototypeLoader {
     private static PrototypeLoader instance;
-    private ObjectMapper objectMapper = new YAMLMapper();
+    private final ObjectMapper objectMapper = new YAMLMapper();
 
     private PrototypeLoader() {
 
@@ -40,8 +37,8 @@ public class PrototypeLoader {
         try {
             gameObject = objectMapper.readValue(configFilePath, type);
         } catch (IOException e) {
-            String message = String.format("Can't find config file %s for class %s", configFilePath.getFile(), type);
-            throw new InitGameException(message, e);
+            String exceptionMessage = String.format("Can't find config file %s for class %s", configFilePath.getFile(), type);
+            throw new InitGameException(exceptionMessage, e);
         }
 
         return gameObject;

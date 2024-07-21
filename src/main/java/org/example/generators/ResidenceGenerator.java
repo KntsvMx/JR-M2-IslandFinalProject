@@ -2,9 +2,7 @@ package org.example.generators;
 
 import org.example.abstraction.interfaces.GameObject;
 import org.example.entities.animals.abstractions.Animal;
-import org.example.entities.interfaces.Organism;
 import org.example.entities.limits.Limits;
-import org.example.entities.map.Cell;
 import org.example.entities.plants.Plant;
 import org.example.factory.OrganismFactory;
 

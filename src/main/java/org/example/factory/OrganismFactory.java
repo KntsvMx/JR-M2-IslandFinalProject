@@ -1,6 +1,5 @@
 package org.example.factory;
 
-import lombok.Getter;
 import org.example.abstraction.interfaces.GameObject;
 
 import java.util.HashMap;
