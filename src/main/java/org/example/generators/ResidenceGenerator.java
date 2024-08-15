@@ -9,6 +9,9 @@ import org.example.entities.plants.Plant;
 import org.example.factory.OrganismFactory;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ResidenceGenerator {
     private static ResidenceGenerator instance;
@@ -26,12 +29,12 @@ public class ResidenceGenerator {
     }
 
     public Map<Class<? extends GameObject>, List<GameObject>> generateNewResidence() {
-        Map<Class<? extends GameObject>, List<GameObject>> residents = new HashMap<>();
+        Map<Class<? extends GameObject>, List<GameObject>> residents = new ConcurrentHashMap<>();
         Set<Class<? extends GameObject>> prototypes = organismFactory.getPrototypes();
-        List<GameObject> organisms = new ArrayList<>();
+        List<GameObject> organisms = new CopyOnWriteArrayList<>();
         Random randomAmount = new Random();
         int maxCount = 0;
-        int count; 
+        int count;
 
 
         for (Class<? extends GameObject> prototype: prototypes) {
