@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import org.example.entities.interfaces.Eatable;
 import org.example.entities.interfaces.Organism;
 import org.example.entities.map.Cell;
 
@@ -14,7 +15,7 @@ import org.example.entities.map.Cell;
 @Getter
 @EqualsAndHashCode
 @ToString
-public abstract class Plant implements Organism {
+public abstract class Plant implements Organism, Eatable {
 
     @JsonIgnore
     private Cell cell;
@@ -26,4 +27,14 @@ public abstract class Plant implements Organism {
     private int weight;
     private int health;
     private int age;
+
+    @Override
+    public void play() {
+
+    }
+
+    @Override
+    public void beEaten() {
+        this.isAlive = false;
+    }
 }

@@ -7,15 +7,10 @@ import org.example.entities.interfaces.Eatable;
 
 @SuperBuilder
 @NoArgsConstructor
-public abstract class Predator extends Animal implements Eatable {
+public abstract class Predator extends Animal {
 
     @Override
-    public void eat() {
-
-    }
-
-    @Override
-    public void findFood() {
-
+    public void play() {
+        super.play();
     }
 }
