@@ -18,13 +18,9 @@ public class Grass extends Plant {
 
     @Override
     public void play() {
-        reproduce();
+        super.play();
     }
 
-    @Override
-    public GameObject reproduce() {
-        return null;
-    }
 }
 
 
