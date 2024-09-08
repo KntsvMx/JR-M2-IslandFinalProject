@@ -6,6 +6,7 @@ import org.example.entities.map.GameField;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
 
 public class CellGenerator {
     private static CellGenerator instance;

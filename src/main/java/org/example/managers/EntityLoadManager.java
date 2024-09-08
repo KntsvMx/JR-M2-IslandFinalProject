@@ -7,9 +7,9 @@ import org.example.factory.OrganismFactory;
 
 public class EntityLoadManager {
     private static EntityLoadManager instance;
-    private GameObjectScanner gameObjectScanner;
-    private PrototypeLoader prototypeLoader;
-    private OrganismFactory organismFactory;
+    private final GameObjectScanner gameObjectScanner;
+    private final PrototypeLoader prototypeLoader;
+    private final OrganismFactory organismFactory;
 
     private EntityLoadManager() {
         gameObjectScanner = GameObjectScanner.getInstance();
