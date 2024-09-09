@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class GameObjectScanner {
     private static GameObjectScanner instance;
-    private final Reflections reflections = new Reflections("org/example");
+    private final Reflections reflections = new Reflections("org.example");
 
     private GameObjectScanner() {
 
@@ -33,11 +33,14 @@ public class GameObjectScanner {
                 .collect(Collectors.toSet());
     }
 
-    public Class<? extends GameField> getGameFieldClass() {
-        return reflections.getSubTypesOf(GameField.class)
+    public Class<GameField> getGameFieldClass() {
+        return reflections.getTypesAnnotatedWith(Config.class)
                 .stream()
-                .filter(c -> c.isAnnotationPresent(Config.class))
+                .filter(GameField.class::equals)  // Проверяем, что класс — это сам GameField
+                .map(c -> (Class<GameField>) c)
                 .findFirst()
                 .orElseThrow(() -> new InitGameException("GameField must have @Config annotation"));
     }
+
+
 }
