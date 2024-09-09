@@ -10,7 +10,7 @@ import org.example.abstraction.interfaces.GameObject;
 import org.example.entities.animals.abstractions.Herbivore.Herbivore;
 
 @GameObjectEntity
-@Config(fileName = "model/yamlFormat/horst.yaml")
+@Config(fileName = "model/yamlFormat/horse.yaml")
 @NoArgsConstructor
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)

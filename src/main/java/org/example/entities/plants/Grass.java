@@ -9,7 +9,7 @@ import org.example.abstraction.annotations.GameObjectEntity;
 import org.example.abstraction.interfaces.GameObject;
 
 @GameObjectEntity
-@Config(fileName = "")
+@Config(fileName = "model/yamlFormat/grass.yaml")
 @NoArgsConstructor
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
