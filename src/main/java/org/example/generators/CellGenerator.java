@@ -1,30 +1,16 @@
 package org.example.generators;
 
-import org.example.abstraction.interfaces.GameObject;
 import org.example.entities.map.Cell;
 import org.example.entities.map.GameField;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
-
 public class CellGenerator {
-    private static CellGenerator instance;
-    private final ResidenceGenerator residenceGenerator;
-    private CellGenerator() {
-        residenceGenerator = ResidenceGenerator.getInstance();
+
+    public CellGenerator() {
 
     }
 
-    public static CellGenerator getInstance() {
-        if (instance == null) {
-            instance = new CellGenerator();
-        }
-        return instance;
-    }
-
-    public Cell[][] generate(GameField gameField) {
-        Map<Class<? extends GameObject>, List<GameObject>> residents;
+//    TODO: Simplify this generate method
+    public Cell[][] generateCells(GameField gameField) {
         int width = gameField.getWidth();
         int height = gameField.getHeight();
 
@@ -32,8 +18,7 @@ public class CellGenerator {
 
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                residents = residenceGenerator.generateNewResidence();
-                cells[i][j] = Cell.builder().residents(residents).build();
+                cells[i][j] = Cell.builder().build();
             }
         }
 
@@ -41,7 +26,7 @@ public class CellGenerator {
 
         return cells;
     }
-
+//    TODO: Refactor these methods
     private void initializeNeighbors(Cell[][] cells, int width, int height) {
         int[] rowOffSets = {-1, 1, 0, 0};
         int[] colOffSets = {0, 0, -1, 1};
