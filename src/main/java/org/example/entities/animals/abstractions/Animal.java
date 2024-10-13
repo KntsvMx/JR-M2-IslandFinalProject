@@ -7,6 +7,7 @@ import org.example.entities.interfaces.Eatable;
 import org.example.entities.interfaces.Movable;
 import org.example.entities.interfaces.Organism;
 import org.example.entities.limits.Limits;
+import org.example.entities.map.Cell;
 import org.example.entities.map.InteractableCell;
 import org.example.entities.target.Target;
 
@@ -36,20 +37,23 @@ public abstract class Animal implements Organism, Movable, Eatable {
     private int health;
     private int age;
 
-
+    
     public void play() {
 
     }
 
-    public void move() {
-    // TODO: realize move method via MoveBehavior
+    @Override
+    public void move(Cell targetCell) {
+        targetCell.addGameObjectToResidents(this.getClass(), this);
+        cell.removeGameObjectFromResidents(this);
+        cell = targetCell;
     }
-
-
 
     @Override
     public void beEaten() {
         this.setAlive(false);
+        this.setHealth(0);
+//            TODO: implement method which will delete GameObject from cell (performance improvement)
     }
 
     public void changeHealthAfterAction() {
