@@ -37,13 +37,13 @@ public abstract class Animal implements Organism, Movable, Eatable {
     private int health;
     private int age;
 
-    
+
     public void play() {
 
     }
 
     @Override
-    public void move(Cell targetCell) {
+    public void move(InteractableCell targetCell) {
         targetCell.addGameObjectToResidents(this.getClass(), this);
         cell.removeGameObjectFromResidents(this);
         cell = targetCell;
