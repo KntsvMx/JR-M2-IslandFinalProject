@@ -1,8 +1,9 @@
-package org.example.behaviour.general;
+package org.example.behaviour.generalBehaviorStatements;
 
 import org.example.abstraction.interfaces.GameObject;
 import org.example.entities.animals.abstractions.Animal;
 import org.example.entities.interfaces.Eatable;
+import org.example.entities.map.InteractableCell;
 import org.example.entities.plants.Plant;
 
 import javax.annotation.Nullable;
@@ -29,25 +30,29 @@ public class EatBehavior {
         }
     }
 
-    public void eat(Animal animal, List<GameObject> potentialFood, Integer targetValue) {
+    private void eat(Animal animal, List<GameObject> potentialFood, Integer targetValue) {
         Random random = new Random();
         int randomIndex = random.nextInt(100);
+        int currentWeight = animal.getWeight();
+        int SUBTRACTING_WEIGHT = - 10;
+        InteractableCell interactableCell = animal.getCell();
 
         GameObject gameObject = findAnyFirstPotentialFood(potentialFood);
 
         if (gameObject == null) {
             throw new IllegalArgumentException("Game object not found");
         }
+
         if (randomIndex >= targetValue) {
             Eatable eatenObject = (Eatable) gameObject;
             eatenObject.beEaten();
 
             animal.setWeight(calculateNutritionalValue(gameObject));
-//            TODO: Realize remove eatenObject animal or grass from the cell
-//            removeGameObject(gameObject);
+//            TODO: observe changing statement if object has eaten
+            interactableCell.removeGameObjectFromResidents(gameObject);
         } else {
             animal.changeHealthAfterAction();
-            animal.setWeight(calculateNutritionalValue(gameObject) / 2);
+            animal.setWeight(currentWeight - SUBTRACTING_WEIGHT);
         }
     }
 
@@ -67,8 +72,6 @@ public class EatBehavior {
         }
         return 0;
     }
-
-
 
 
 }
