@@ -9,22 +9,20 @@ import org.example.abstraction.annotations.GameObjectEntity;
 import org.example.abstraction.interfaces.GameObject;
 
 @GameObjectEntity
-@Config(fileName = "")
+@Config(fileName = "model/yamlFormat/grass.yaml")
 @NoArgsConstructor
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class Grass extends Plant {
 
-    @Override
-    public void play() {
-
-    }
 
     @Override
     public GameObject reproduce() {
-        return null;
+//        TODO: fill builder pattern to work state
+        return Grass.builder().build();
     }
+
 }
 
 

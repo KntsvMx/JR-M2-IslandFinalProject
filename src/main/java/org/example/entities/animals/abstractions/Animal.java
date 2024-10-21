@@ -3,15 +3,14 @@ package org.example.entities.animals.abstractions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.example.abstraction.interfaces.GameObject;
 import org.example.entities.interfaces.Eatable;
 import org.example.entities.interfaces.Movable;
 import org.example.entities.interfaces.Organism;
 import org.example.entities.limits.Limits;
 import org.example.entities.map.Cell;
+import org.example.entities.map.InteractableCell;
 import org.example.entities.target.Target;
 
-import java.util.*;
 
 @NoArgsConstructor
 @SuperBuilder
@@ -26,8 +25,9 @@ public abstract class Animal implements Organism, Movable, Eatable {
     @Builder.Default
     private final long UID = serialUID++;
 
+    @Setter
     @JsonIgnore
-    private Cell cell;
+    private InteractableCell cell;
 
     private Limits limits;
     private Target target;
@@ -38,91 +38,38 @@ public abstract class Animal implements Organism, Movable, Eatable {
     private int health;
     private int age;
 
+    
     public void play() {
-        move();
-        findFood();
-    }
 
-    public void move() {
-        Cell currentCell;
-        if (isEnoughHealth()) {
-            currentCell = cell.getRandomCell();
-            currentCell.addNewResident(getObjectClass(), getGameObject());
-            changeHealthAfterMove();
-            removeGameObjectFromCell();
-        }
     }
 
     @Override
-    public void findFood() {
-        Map<Class<? extends GameObject>, List<GameObject>> residents = getCell().getResidents();
-        Map<Class<? extends GameObject>, Integer> targets = getTarget().getTargetMatrix();
-        Optional<Map.Entry<Class<? extends GameObject>, Integer>> matchingTarget = Optional.empty();
-        List<GameObject> gameObjects = new ArrayList<>();
-
-        for (Map.Entry<Class<? extends GameObject>, List<GameObject>> resident : residents.entrySet()) {
-            matchingTarget = targets.entrySet()
-                    .stream()
-                    .filter(entry -> entry.getKey().equals(resident.getKey()))
-                    .findFirst();
-            gameObjects = resident.getValue();
-
-        }
-
-        eat(matchingTarget, gameObjects);
+    public void move(InteractableCell targetCell) {
+        targetCell.addGameObjectToResidents(this.getClass(), this);
+        cell.removeGameObjectFromResidents(this);
+        cell = targetCell;
     }
 
     @Override
-    public void eat(Optional<Map.Entry<Class<? extends GameObject>, Integer>> matchingTarget, List<GameObject> gameObjects) {
-        isNullMatchingTarget(matchingTarget);
+    public void beEaten() {
+        this.setAlive(false);
+        this.setHealth(0);
+//            TODO: implement method which will delete GameObject from cell (performance improvement)
+    }
 
-        Map.Entry<Class<? extends GameObject>, Integer> target = matchingTarget.get();
-        Integer targetValue = target.getValue();
-        Animal gameObject = (Animal) gameObjects.stream().findAny().get();
-        int weight = getWeight();
+    public void changeHealthAfterAction() {
+        setHealth((getHealth() * 5) / 100);
+    }
 
-        if (doesCatchTarget(targetValue)) {
-            updateTargetStatus(weight, gameObject);
+    public void exchangeWeightToHealth() {
+//      TODO: To think about replace MINIMUM_HEALTH to global variable from local
+        final int MINIMUM_HEALTH = 20;
+        if ((this.getWeight() / 2) > MINIMUM_HEALTH) {
+//          TODO: To think about name of exchangedWeight, probably will found better name
+            int exchangedWeight = this.getWeight() / 2;
+            setHealth(exchangedWeight);
+            setWeight(exchangedWeight);
         }
-    }
-
-    private static void isNullMatchingTarget(Optional<Map.Entry<Class<? extends GameObject>, Integer>> matchingTarget) {
-        if (matchingTarget.isEmpty()) {
-            throw new IllegalArgumentException("Matching target is null");
-        }
-    }
-
-    private static boolean doesCatchTarget(Integer targetValue) {
-        Random random = new Random();
-        return random.nextInt(100) >= targetValue;
-    }
-
-    private void updateTargetStatus(int weight, Animal gameObject) {
-        weight = weight + gameObject.getWeight();
-        gameObject.setAlive(false);
-        this.setWeight(weight);
-        gameObject.removeGameObjectFromCell();
-    }
-
-    private void changeHealthAfterMove() {
-        health = (health * 5) / 100;
-    }
-
-    private boolean isEnoughHealth() {
-        return health >= 40;
-    }
-
-    private GameObject getGameObject() {
-        List<GameObject> gameObjects = cell.getResidents().get(getObjectClass());
-        return gameObjects.get(gameObjects.indexOf(this));
-    }
-
-    private Class<? extends GameObject> getObjectClass() {
-        return this.getClass();
-    }
-
-    public void removeGameObjectFromCell() {
-        cell.getResidents().get(getObjectClass()).remove(getGameObject());
     }
 
 }

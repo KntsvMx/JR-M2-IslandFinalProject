@@ -7,9 +7,5 @@ import org.example.entities.animals.abstractions.Animal;
 @SuperBuilder
 @NoArgsConstructor
 public abstract class Herbivore extends Animal {
-    @Override
-    public void play() {
-        super.play();
 
-    }
 }

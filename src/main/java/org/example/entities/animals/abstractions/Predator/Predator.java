@@ -6,11 +6,11 @@ import org.example.entities.animals.abstractions.Animal;
 
 @SuperBuilder
 @NoArgsConstructor
-public abstract class Predator extends Animal{
+public abstract class Predator extends Animal {
+
 
     @Override
     public void play() {
         super.play();
-        findFood();
     }
 }

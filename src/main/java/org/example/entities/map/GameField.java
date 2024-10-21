@@ -5,7 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.abstraction.annotations.Config;
 
-@Config(fileName = "")
+
+@Config(fileName = "model/yamlFormat/gameField.yaml")
 @Getter
 @NoArgsConstructor
 public class GameField {

@@ -7,7 +7,5 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface Eatable {
-    void eat(Optional<Map.Entry<Class<? extends GameObject>, Integer>> matchingTarget, List<GameObject> gameObjects);
-
-    void findFood();
+    void beEaten();
 }
