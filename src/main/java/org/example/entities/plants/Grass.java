@@ -16,9 +16,11 @@ import org.example.abstraction.interfaces.GameObject;
 @ToString(callSuper = true)
 public class Grass extends Plant {
 
+
     @Override
-    public void play() {
-        super.play();
+    public GameObject reproduce() {
+//        TODO: fill builder pattern to work state
+        return Grass.builder().build();
     }
 
 }
