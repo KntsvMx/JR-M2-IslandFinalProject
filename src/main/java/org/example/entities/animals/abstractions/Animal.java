@@ -11,6 +11,7 @@ import org.example.entities.map.Cell;
 import org.example.entities.map.InteractableCell;
 import org.example.entities.target.Target;
 
+
 @NoArgsConstructor
 @SuperBuilder
 @Setter
@@ -37,7 +38,7 @@ public abstract class Animal implements Organism, Movable, Eatable {
     private int health;
     private int age;
 
-
+    
     public void play() {
 
     }
@@ -70,4 +71,5 @@ public abstract class Animal implements Organism, Movable, Eatable {
             setWeight(exchangedWeight);
         }
     }
+
 }
