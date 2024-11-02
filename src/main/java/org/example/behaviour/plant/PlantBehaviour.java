@@ -1,13 +1,24 @@
 package org.example.behaviour.plant;
 
+import org.example.abstraction.interfaces.GameObject;
+import org.example.behaviour.generalBehaviorStatements.ReproduceBehavior;
+import org.example.entities.animals.abstractions.Animal;
+import org.example.entities.map.Cell;
+import org.example.entities.plants.Plant;
 import org.example.statistic.interfaces.Observer;
 import org.example.statistic.interfaces.Subject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class PlantBehaviour implements Subject {
     List<Observer> observers = new ArrayList<>();
+    private final ReproduceBehavior reproduceBehavior;
+
+    public PlantBehaviour() {
+        this.reproduceBehavior = new ReproduceBehavior();
+    }
 
     @Override
     public void addObserver(Observer observer) {
@@ -22,5 +33,14 @@ public class PlantBehaviour implements Subject {
     @Override
     public void notifyObservers() {
 
+    }
+
+    public void grow(Cell cell) {
+        for (Map.Entry<Class<? extends GameObject>, List<GameObject>> gameObject : cell.getResidents().entrySet()) {
+            if (Plant.class.isAssignableFrom(gameObject.getKey())) {
+               reproduceBehavior.reproducePlant((Plant) gameObject.getValue().stream()
+                        .filter(gameObject1 -> gameObject1 instanceof Plant).findFirst().get());
+            }
+        };
     }
 }
