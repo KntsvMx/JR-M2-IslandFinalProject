@@ -30,6 +30,6 @@ public class AppConfigurator {
         loadManager.loadPrototypes();
         GameField gameField = loadManager.loadMapPrototype();
         cellManager.init(gameField);
-//        behaviorManager.init(gameField);
+        behaviorManager.init(gameField);
     }
 }
