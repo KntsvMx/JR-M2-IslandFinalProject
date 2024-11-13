@@ -47,11 +47,12 @@ public class ResidentsGenerator {
             count = randomAmount.nextInt(maxCount + 1);
 
             for (int i = 0; i < count; i++) {
-                organisms.add(organismFactory.create(prototype));
+                organisms.add(prototypes.get(prototype).copy());
             }
 
             initializeCells(organisms, cell);
             residents.put(prototype, organisms);
+            cell.setResidents(residents);
         }
     }
 

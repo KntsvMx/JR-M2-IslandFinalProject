@@ -2,7 +2,6 @@ package org.example.behaviour.plant;
 
 import org.example.abstraction.interfaces.GameObject;
 import org.example.behaviour.generalBehaviorStatements.ReproduceBehavior;
-import org.example.entities.animals.abstractions.Animal;
 import org.example.entities.map.Cell;
 import org.example.entities.plants.Plant;
 import org.example.statistic.interfaces.Observer;
@@ -38,7 +37,7 @@ public class PlantBehaviour implements Subject {
     public void grow(Cell cell) {
         for (Map.Entry<Class<? extends GameObject>, List<GameObject>> gameObject : cell.getResidents().entrySet()) {
             if (Plant.class.isAssignableFrom(gameObject.getKey())) {
-               reproduceBehavior.reproducePlant((Plant) gameObject.getValue().stream()
+                reproduceBehavior.reproducePlant((Plant) gameObject.getValue().stream()
                         .filter(gameObject1 -> gameObject1 instanceof Plant).findFirst().get());
             }
         };

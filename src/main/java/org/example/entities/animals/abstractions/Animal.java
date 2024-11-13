@@ -3,6 +3,7 @@ package org.example.entities.animals.abstractions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.example.abstraction.interfaces.GameObject;
 import org.example.entities.interfaces.Eatable;
 import org.example.entities.interfaces.Movable;
 import org.example.entities.interfaces.Organism;
@@ -19,7 +20,7 @@ import org.example.entities.target.Target;
 @EqualsAndHashCode
 @ToString
 
-public abstract class Animal implements Organism, Movable, Eatable {
+public abstract class Animal implements Organism, Movable, Eatable, Cloneable {
     private static long serialUID = 1L;
 
     @Builder.Default
@@ -72,4 +73,12 @@ public abstract class Animal implements Organism, Movable, Eatable {
         }
     }
 
+    @Override
+    public GameObject copy() {
+        try {
+            return (Animal) this.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError("Cloning not supported", e);
+        }
+    }
 }

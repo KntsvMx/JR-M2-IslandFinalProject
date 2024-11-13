@@ -18,7 +18,6 @@ public class Target {
 
     public Target() {
         gameObjectScanner = GameObjectScanner.getInstance();
-        targetMatrix = transformToTargetMatrix();
     }
 
     private Map<Class<? extends GameObject>, Integer> transformToTargetMatrix() {
@@ -42,5 +41,10 @@ public class Target {
                 .stream()
                 .filter(c -> (c.getSimpleName().equals(target)))
                 .collect(Collectors.toSet());
+    }
+
+    public Map<Class<? extends GameObject>, Integer> getTargetMatrix() {
+        targetMatrix = transformToTargetMatrix();
+        return targetMatrix;
     }
 }

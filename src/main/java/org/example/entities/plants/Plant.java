@@ -3,6 +3,7 @@ package org.example.entities.plants;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.example.abstraction.interfaces.GameObject;
 import org.example.entities.interfaces.Eatable;
 import org.example.entities.interfaces.Organism;
 import org.example.entities.map.Cell;
@@ -14,7 +15,7 @@ import org.example.entities.map.InteractableCell;
 @Setter
 @EqualsAndHashCode
 @ToString
-public abstract class Plant implements Organism, Eatable {
+public abstract class Plant implements Organism, Eatable, Cloneable{
 
     @Setter
     @JsonIgnore
@@ -40,4 +41,12 @@ public abstract class Plant implements Organism, Eatable {
 //        TODO: implement method which will delete GameObject from cell (performance improvement)
     }
 
+    @Override
+    public GameObject copy() {
+        try {
+            return (Plant) this.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError("Cloning not supported", e);
+        }
+    }
 }
