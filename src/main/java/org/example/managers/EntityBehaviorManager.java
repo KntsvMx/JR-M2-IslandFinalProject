@@ -92,7 +92,7 @@ public class EntityBehaviorManager {
         // Вызов статистики здесь
     }
 
-    private void processCell(Cell cell) {
+    private synchronized void processCell(Cell cell) {
         for (Animal animal : getAllAnimals(cell)) {
             animalBehaviour.act(animal);
         }

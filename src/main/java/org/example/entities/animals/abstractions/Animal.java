@@ -8,9 +8,11 @@ import org.example.entities.interfaces.Eatable;
 import org.example.entities.interfaces.Movable;
 import org.example.entities.interfaces.Organism;
 import org.example.entities.limits.Limits;
-import org.example.entities.map.Cell;
 import org.example.entities.map.InteractableCell;
 import org.example.entities.target.Target;
+import org.example.global.GlobalVariables;
+
+import java.util.concurrent.atomic.AtomicLong;
 
 
 @NoArgsConstructor
@@ -21,10 +23,11 @@ import org.example.entities.target.Target;
 @ToString
 
 public abstract class Animal implements Organism, Movable, Eatable, Cloneable {
-    private static long serialUID = 1L;
+
+    private static AtomicLong serialUID = new AtomicLong(1);
 
     @Builder.Default
-    private final long UID = serialUID++;
+    private final long UID = serialUID.getAndIncrement();
 
     @Setter
     @JsonIgnore
@@ -39,27 +42,37 @@ public abstract class Animal implements Organism, Movable, Eatable, Cloneable {
     private int health;
     private int age;
 
-    
+    @Override
     public void play() {
 
     }
 
     @Override
     public void move(InteractableCell targetCell) {
-        targetCell.addGameObjectToResidents(this.getClass(), this);
-        cell.removeGameObjectFromResidents(this);
-        cell = targetCell;
+        GlobalVariables.lock.lock();
+        try {
+            targetCell.addGameObjectToResidents(this.getClass(), this);
+            cell.removeGameObjectFromResidents(this);
+            cell = targetCell;
+        } finally {
+            GlobalVariables.lock.unlock();
+        }
     }
 
     @Override
     public void beEaten() {
-        this.setAlive(false);
-        this.setHealth(0);
-//            TODO: implement method which will delete GameObject from cell (performance improvement)
+        GlobalVariables.lock.lock();
+        try {
+            this.setAlive(false);
+            this.setHealth(0);
+            cell.removeGameObjectFromResidents(this);
+        } finally {
+            GlobalVariables.lock.unlock();
+        }
     }
 
     public void changeHealthAfterAction() {
-        setHealth((getHealth() * 5) / 100);
+        setHealth(getHealth() - 20);
     }
 
     public void exchangeWeightToHealth() {
