@@ -28,6 +28,7 @@ public class OrganismFactory implements PrototypeFactory<GameObject> {
         if (!prototypes.containsKey(type)) {
             throw new IllegalArgumentException();
         }
+        // TODO: change reproduce() to copy() in the next line
         return prototypes.get(type).reproduce();
     }
 

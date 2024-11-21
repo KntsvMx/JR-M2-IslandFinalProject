@@ -25,7 +25,6 @@ public class AppConfigurator {
         return instance;
     }
 
-//    TODO: replace instead of returning gameField to loadManager.loadMapPrototype, otherwise islandManager await gameField that loadMap return;
     public void configure() {
         loadManager.loadPrototypes();
         GameField gameField = loadManager.loadMapPrototype();

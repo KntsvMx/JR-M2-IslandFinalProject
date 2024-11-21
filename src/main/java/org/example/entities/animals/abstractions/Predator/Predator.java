@@ -8,9 +8,4 @@ import org.example.entities.animals.abstractions.Animal;
 @NoArgsConstructor
 public abstract class Predator extends Animal {
 
-
-    @Override
-    public void play() {
-        super.play();
-    }
 }
