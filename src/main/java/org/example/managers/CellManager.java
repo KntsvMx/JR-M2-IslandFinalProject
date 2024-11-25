@@ -1,11 +1,11 @@
 package org.example.managers;
 
+import org.example.abstraction.interfaces.GameObject;
 import org.example.entities.map.Cell;
 import org.example.entities.map.GameField;
+import org.example.entities.map.InteractableCell;
 import org.example.generators.CellGenerator;
 import org.example.generators.ResidentsGenerator;
-
-import java.util.Random;
 
 public class CellManager {
     private static CellManager instance;
@@ -31,17 +31,20 @@ public class CellManager {
         gameField.setCells(cells);
     }
 
-    public Cell getRandomCell() {
-        Random random = new Random();
-        return cells[random.nextInt(cells.length)][random.nextInt(cells.length)];
+    public Cell getRandomCellFromClosest(InteractableCell cell) {
+        return cell.getRandomCellFromClosest();
     }
 
-    public void addGameObject() {
-//        TODO: Realize add GameObject to the cell
+    public void addGameObject(InteractableCell cell, GameObject gameObject) {
+        if(cell != null && gameObject != null && cell.getResidents() != null) {
+            cell.addGameObjectToResidents(gameObject.getClass(), gameObject);
+        } else {
+            throw new IllegalArgumentException("Cell or GameObject is null");
+        }
     }
 
-    public void removeGameObject() {
-//        TODO: Realize remove GameObject from the cell
+    public void removeGameObject(InteractableCell cell, GameObject resident) {
+        cell.removeGameObjectFromResidents(resident);
     }
 
 

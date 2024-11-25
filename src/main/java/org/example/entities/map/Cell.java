@@ -39,12 +39,15 @@ public class Cell implements InteractableCell{
     }
 
     public void removeGameObjectFromResidents(GameObject object) {
-//        TODO: Add check nullPointerException for List<GameObject> for example if structure hasn't created or absent
-        getResidents().get(object.getClass()).remove(object);
+       if (residents.get(object.getClass()) != null && !residents.get(object.getClass()).isEmpty()) {
+            residents.get(object.getClass()).remove(object);
+        } else {
+            throw new IllegalArgumentException("Object not found");
+        }
+
     }
 
     public void addGameObjectToResidents(Class<? extends GameObject> gameObjectClass, GameObject object) {
-//        TODO: Probably change computeIfPresent to computeIfAbsent as List could be absent
         residents.computeIfPresent(gameObjectClass, (key, list) -> {
             list.add(object);
             return list;
