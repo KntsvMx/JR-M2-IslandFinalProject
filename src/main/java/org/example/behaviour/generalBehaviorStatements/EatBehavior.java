@@ -5,6 +5,7 @@ import org.example.entities.animals.abstractions.Animal;
 import org.example.entities.interfaces.Eatable;
 import org.example.entities.map.InteractableCell;
 import org.example.entities.plants.Plant;
+import org.example.managers.CellManager;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -12,7 +13,11 @@ import java.util.Map;
 import java.util.Random;
 
 public class EatBehavior {
+    private final CellManager cellManager;
 
+    public EatBehavior() {
+        cellManager = CellManager.getInstance();
+    }
 
     public void findFood(Animal animal) {
         Map<Class<? extends GameObject>, List<GameObject>> residents = animal.getCell().getResidents();
@@ -43,13 +48,13 @@ public class EatBehavior {
             throw new IllegalArgumentException("Game object not found");
         }
 
-        if (randomIndex >= targetValue) {
+        if (randomIndex >= targetValue || targetValue == 100) {
             Eatable eatenObject = (Eatable) gameObject;
             eatenObject.beEaten();
 
             animal.setWeight(calculateNutritionalValue(gameObject));
 //            TODO: observe changing statement if object has eaten
-            interactableCell.removeGameObjectFromResidents(gameObject);
+            cellManager.removeGameObject(interactableCell, (GameObject) eatenObject);
         } else {
             animal.changeHealthAfterAction();
             animal.setWeight(currentWeight - SUBTRACTING_WEIGHT);
@@ -72,6 +77,4 @@ public class EatBehavior {
         }
         return 0;
     }
-
-
 }
