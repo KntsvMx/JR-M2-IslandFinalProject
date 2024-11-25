@@ -39,7 +39,7 @@ public class Target {
     private Set<Class<? extends GameObject>> getMatchGameObjectClasses(String target) {
         return gameObjectScanner.getAllGameObjectClasses()
                 .stream()
-                .filter(c -> (c.getSimpleName().equals(target)))
+                .filter(c -> (c.getSimpleName().equalsIgnoreCase(target)))
                 .collect(Collectors.toSet());
     }
 
