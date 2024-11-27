@@ -37,7 +37,7 @@ public class PlantBehaviour implements Subject {
     public void grow(Cell cell) {
         for (Map.Entry<Class<? extends GameObject>, List<GameObject>> gameObject : cell.getResidents().entrySet()) {
             if (Plant.class.isAssignableFrom(gameObject.getKey())) {
-                reproduceBehavior.reproducePlant((Plant) gameObject.getValue().stream()
+                reproduceBehavior.reproduce((Plant) gameObject.getValue().stream()
                         .filter(gameObject1 -> gameObject1 instanceof Plant).findFirst().get());
             }
         };

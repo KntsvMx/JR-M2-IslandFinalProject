@@ -5,33 +5,59 @@ import org.example.entities.animals.abstractions.Animal;
 import org.example.entities.map.InteractableCell;
 import org.example.entities.plants.Plant;
 import org.example.factory.OrganismFactory;
+import org.example.managers.CellManager;
+import org.jetbrains.annotations.Nullable;
 
 public class ReproduceBehavior {
+    private final CellManager cellManager;
 
-//    TODO: improve method, combine two logic with reproduce animals and plants (by using polymorphism)
-    public void reproduceAnimal(Animal animalGameObject) {
-        InteractableCell currentCell = animalGameObject.getCell();
+    public ReproduceBehavior() {
+        cellManager = CellManager.getInstance();
+    }
+
+    public void reproduce(GameObject gameObject) {
+        InteractableCell currentCell = getInteractableCell(gameObject);
         OrganismFactory organismFactory = OrganismFactory.getInstance();
 
-        Animal sameSpecie = (Animal) animalGameObject.getCell().getResidents().entrySet().stream().findAny().orElse(null);
-        if (isEnoughHealth(sameSpecie, animalGameObject) && sameSpecie != null && availableSpaceForSpecie(animalGameObject.getCell(), animalGameObject.getLimits().getMaxAmount())) {
-            GameObject newAnimal = organismFactory.create(animalGameObject.getClass());
-            currentCell.addGameObjectToResidents(newAnimal.getClass(), newAnimal);
+        if(gameObject instanceof Animal animal) {
+            reproduceAnimal(animal, currentCell, organismFactory);
+        } else if (gameObject instanceof Plant plantGameObject) {
+            reproducePlant(plantGameObject, currentCell, organismFactory);
+        }
+    }
+
+    private void reproduceAnimal(Animal animal, InteractableCell currentCell, OrganismFactory organismFactory) {
+        Animal sameSpecie = getSameSpecie(animal);
+        if (canReproduce(animal, currentCell, sameSpecie)) {
+            GameObject newAnimal = organismFactory.create(animal.getClass());
+            cellManager.addGameObject(currentCell, newAnimal);
         } else {
             throw new IllegalArgumentException("Species not available");
         }
     }
 
-    public void reproducePlant(Plant plantGameObject) {
-        InteractableCell currentCell = plantGameObject.getCell();
-        OrganismFactory organismFactory = OrganismFactory.getInstance();
 
-        if (availableSpaceForSpecie(plantGameObject.getCell(), plantGameObject.getMaxAmount())) {
-          GameObject newPlant = organismFactory.create(plantGameObject.getClass());
-          currentCell.addGameObjectToResidents(newPlant.getClass(), newPlant);
+    private void reproducePlant(Plant plantGameObject, InteractableCell currentCell, OrganismFactory organismFactory) {
+        if (availableSpaceForSpecie(currentCell, plantGameObject.getMaxAmount())) {
+            GameObject newPlant = organismFactory.create(plantGameObject.getClass());
+            cellManager.addGameObject(currentCell, newPlant);
         } else {
             throw new IllegalArgumentException("Plants not available");
         }
+    }
+
+    private boolean canReproduce(Animal animal, InteractableCell currentCell, Animal sameSpecie) {
+        return isEnoughHealth(sameSpecie, animal) && sameSpecie != null && availableSpaceForSpecie(currentCell, animal.getLimits().getMaxAmount());
+    }
+
+    private static @Nullable InteractableCell getInteractableCell(GameObject gameObject) {
+        InteractableCell currentCell = null;
+        if (gameObject instanceof Animal) {
+            currentCell = ((Animal) gameObject).getCell();
+        } else if (gameObject instanceof Plant) {
+            currentCell = ((Plant) gameObject).getCell();
+        }
+        return currentCell;
     }
 
     private static boolean isEnoughHealth(Animal sameSpecie, Animal gameObject) {
@@ -42,5 +68,9 @@ public class ReproduceBehavior {
     private boolean availableSpaceForSpecie(InteractableCell sameSpecie, Integer maxAmount) {
         int amountOfSpecie = sameSpecie.getResidents().get(sameSpecie.getClass()).size();
         return amountOfSpecie < maxAmount;
+    }
+
+    private static @Nullable Animal getSameSpecie(Animal animalGameObject) {
+        return (Animal) animalGameObject.getCell().getResidents().entrySet().stream().findAny().orElse(null);
     }
 }

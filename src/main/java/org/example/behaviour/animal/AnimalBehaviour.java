@@ -41,7 +41,7 @@ public class AnimalBehaviour implements Subject {
     public void act(Animal animal) {
         moveBehavior.move(animal);
         eatBehavior.findFood(animal);
-        reproduceBehavior.reproduceAnimal(animal);
+        reproduceBehavior.reproduce(animal);
     }
 
 
