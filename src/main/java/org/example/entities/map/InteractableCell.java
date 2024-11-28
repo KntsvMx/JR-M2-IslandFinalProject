@@ -4,6 +4,7 @@ import org.example.abstraction.interfaces.GameObject;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 public interface InteractableCell {
     Map<Class<? extends GameObject>, List<GameObject>> getResidents();
@@ -17,6 +18,8 @@ public interface InteractableCell {
     void removeGameObjectFromResidents(GameObject gameObject);
 
     void addGameObjectToResidents(Class<? extends GameObject> gameObjectClass, GameObject object);
+
+    ReentrantLock getLock();
 
 
 }

@@ -9,11 +9,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Builder
 @Getter
 public class Cell implements InteractableCell{
     private static long serialUID = 1L;
+    @Getter
+    private final ReentrantLock lock = new ReentrantLock();
 
     @Builder.Default
     private final long UID = serialUID++;
@@ -53,4 +56,6 @@ public class Cell implements InteractableCell{
             return list;
         });
     }
+
+
 }
