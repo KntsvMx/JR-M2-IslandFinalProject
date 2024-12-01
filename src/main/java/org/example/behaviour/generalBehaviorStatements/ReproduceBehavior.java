@@ -8,6 +8,8 @@ import org.example.factory.OrganismFactory;
 import org.example.managers.CellManager;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public class ReproduceBehavior {
     private final CellManager cellManager;
 
@@ -66,11 +68,18 @@ public class ReproduceBehavior {
     }
 
     private boolean availableSpaceForSpecie(InteractableCell sameSpecie, Integer maxAmount) {
-        int amountOfSpecie = sameSpecie.getResidents().get(sameSpecie.getClass()).size();
+        int amountOfSpecie = sameSpecie.getResidents().getOrDefault(sameSpecie.getClass(), List.of()).size();
         return amountOfSpecie < maxAmount;
     }
 
     private static @Nullable Animal getSameSpecie(Animal animalGameObject) {
-        return (Animal) animalGameObject.getCell().getResidents().entrySet().stream().findAny().orElse(null);
+        return animalGameObject.getCell().getResidents().get(animalGameObject.getClass())
+                .stream()
+                .filter(resident -> resident instanceof Animal)
+                .map(resident -> (Animal) resident)
+                .filter(animal -> animal.getClass().equals(animalGameObject.getClass()))
+                .findFirst()
+                .orElse(null);
+
     }
 }
