@@ -53,6 +53,7 @@ public class Cell implements InteractableCell{
     public void addGameObjectToResidents(Class<? extends GameObject> gameObjectClass, GameObject object) {
         residents.computeIfPresent(gameObjectClass, (key, list) -> {
             list.add(object);
+            object.setCell(this);
             return list;
         });
     }
