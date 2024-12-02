@@ -9,26 +9,38 @@ import org.example.managers.CellManager;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class ReproduceBehavior {
     private final CellManager cellManager;
+    private final ReentrantLock lock = new ReentrantLock();
+    private final OrganismFactory organismFactory = OrganismFactory.getInstance();
 
     public ReproduceBehavior() {
         cellManager = CellManager.getInstance();
     }
 
     public void reproduce(GameObject gameObject) {
+        lock.lock();
         InteractableCell currentCell = getInteractableCell(gameObject);
-        OrganismFactory organismFactory = OrganismFactory.getInstance();
 
-        if(gameObject instanceof Animal animal) {
-            reproduceAnimal(animal, currentCell, organismFactory);
-        } else if (gameObject instanceof Plant plantGameObject) {
-            reproducePlant(plantGameObject, currentCell, organismFactory);
+        if (currentCell != null) {
+            currentCell.getLock().lock();
+        }
+
+        try {
+            if (gameObject instanceof Animal animal) {
+                reproduceAnimal(animal, currentCell);
+            } else if (gameObject instanceof Plant plantGameObject) {
+                reproducePlant(plantGameObject, currentCell);
+            }
+        } finally {
+            currentCell.getLock().unlock();
+            lock.unlock();
         }
     }
 
-    private void reproduceAnimal(Animal animal, InteractableCell currentCell, OrganismFactory organismFactory) {
+    private void reproduceAnimal(Animal animal, InteractableCell currentCell) {
         Animal sameSpecie = getSameSpecie(animal);
         if (canReproduce(animal, currentCell, sameSpecie)) {
             GameObject newAnimal = organismFactory.create(animal.getClass());
@@ -39,7 +51,7 @@ public class ReproduceBehavior {
     }
 
 
-    private void reproducePlant(Plant plantGameObject, InteractableCell currentCell, OrganismFactory organismFactory) {
+    private void reproducePlant(Plant plantGameObject, InteractableCell currentCell) {
         if (availableSpaceForSpecie(currentCell, plantGameObject.getMaxAmount())) {
             GameObject newPlant = organismFactory.create(plantGameObject.getClass());
             cellManager.addGameObject(currentCell, newPlant);
@@ -58,6 +70,8 @@ public class ReproduceBehavior {
             currentCell = ((Animal) gameObject).getCell();
         } else if (gameObject instanceof Plant) {
             currentCell = ((Plant) gameObject).getCell();
+        } else {
+            throw new IllegalArgumentException("Object is not an animal or plant or unavailable to return cell");
         }
         return currentCell;
     }
