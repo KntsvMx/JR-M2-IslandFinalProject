@@ -6,6 +6,10 @@ import org.example.behaviour.plant.PlantBehaviour;
 import org.example.entities.animals.abstractions.Animal;
 import org.example.entities.map.Cell;
 import org.example.entities.map.GameField;
+import org.example.statistic.StatisticCollector;
+import org.example.statistic.StatisticMonitor;
+import org.example.statistic.interfaces.Observer;
+import org.example.statistic.interfaces.Subject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,21 +17,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 
-public class EntityBehaviorManager {
+public class EntityBehaviorManager implements Subject {
     private static EntityBehaviorManager instance;
     private final AnimalBehaviour animalBehaviour;
     private final PlantBehaviour plantBehaviour;
 
+    private List<Observer> observers = new ArrayList<>();
+
     private final ScheduledExecutorService scheduledExecutor;
     private final ExecutorService cellExecutorService;
 
+    private final StatisticMonitor statisticMonitor;
+    private final StatisticCollector statisticCollector;
     private int cycleCount = 0;
+
+    private long startTime = 0;
+    private long endTime = 0;
 
     private EntityBehaviorManager() {
         scheduledExecutor = Executors.newScheduledThreadPool(2);
         cellExecutorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         animalBehaviour = new AnimalBehaviour();
         plantBehaviour = new PlantBehaviour();
+        statisticMonitor = StatisticMonitor.getInstance();
+        statisticCollector = StatisticCollector.getInstance();
     }
 
     public static EntityBehaviorManager getInstance() {
@@ -39,6 +52,8 @@ public class EntityBehaviorManager {
 
     public void init(GameField gameField) {
         startSimulation(gameField);
+        startTime = System.currentTimeMillis();
+        statisticCollector.setGameField(gameField);
     }
 
     private void startSimulation(GameField gameField) {
@@ -47,14 +62,12 @@ public class EntityBehaviorManager {
                 this.growPlants(gameField);
             }
         }, 0, 10, TimeUnit.SECONDS);
-        scheduledExecutor.scheduleAtFixedRate(this::collectStatistics, 0, 15, TimeUnit.SECONDS);
 
         while (!Thread.currentThread().isInterrupted()) {
             runCycle(gameField);
         }
     }
 
-    //    TODO: realize grow plants in cells
     private void growPlants(GameField gameField) {
         System.out.println("Запуск задачи роста растений");
         for (Cell[] cells : gameField.getCells()) {
@@ -78,18 +91,24 @@ public class EntityBehaviorManager {
 
         CompletableFuture.allOf(cellFutures.toArray(new CompletableFuture[0])).join();
         cycleCount++;
+        observers.forEach(Observer::updateCycle);
+
 
         if (isAllAnimalsDead(gameField)) {
             stopSimulation();
+            endTime = System.currentTimeMillis();
             System.out.println("Game over");
+            observers.forEach(observer -> observer.updateTime(startTime, endTime));
         }
 
+        scheduledExecutor.schedule(statisticCollector::notifyObservers, 0, TimeUnit.SECONDS);
+        scheduledExecutor.schedule(this::collectStatistics, 0, TimeUnit.SECONDS);
     }
 
     //    TODO: realize statistic observing and print
     private void collectStatistics() {
         System.out.println("Сбор статистики");
-        // Вызов статистики здесь
+        statisticMonitor.printStatistics();
     }
 
     private synchronized void processCell(Cell cell) {
@@ -130,5 +149,20 @@ public class EntityBehaviorManager {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void addObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers() {
+
     }
 }

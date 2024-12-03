@@ -6,12 +6,16 @@ import org.example.entities.map.InteractableCell;
 import org.example.entities.plants.Plant;
 import org.example.factory.OrganismFactory;
 import org.example.managers.CellManager;
+import org.example.statistic.interfaces.Observer;
+import org.example.statistic.interfaces.Subject;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class ReproduceBehavior {
+public class ReproduceBehavior implements Subject {
+    private List<Observer> observers = new ArrayList<>();
     private final CellManager cellManager;
     private final ReentrantLock lock = new ReentrantLock();
     private final OrganismFactory organismFactory = OrganismFactory.getInstance();
@@ -45,6 +49,7 @@ public class ReproduceBehavior {
         if (canReproduce(animal, currentCell, sameSpecie)) {
             GameObject newAnimal = organismFactory.create(animal.getClass());
             cellManager.addGameObject(currentCell, newAnimal);
+            observers.forEach(Observer::updateBorn);
         } else {
             throw new IllegalArgumentException("Species not available");
         }
@@ -55,6 +60,7 @@ public class ReproduceBehavior {
         if (availableSpaceForSpecie(currentCell, plantGameObject.getMaxAmount())) {
             GameObject newPlant = organismFactory.create(plantGameObject.getClass());
             cellManager.addGameObject(currentCell, newPlant);
+            observers.forEach(Observer::updateBorn);
         } else {
             throw new IllegalArgumentException("Plants not available");
         }
@@ -94,6 +100,21 @@ public class ReproduceBehavior {
                 .filter(animal -> animal.getClass().equals(animalGameObject.getClass()))
                 .findFirst()
                 .orElse(null);
+
+    }
+
+    @Override
+    public void addObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers() {
 
     }
 }

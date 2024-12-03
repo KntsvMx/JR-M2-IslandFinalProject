@@ -8,7 +8,6 @@ import org.example.statistic.interfaces.Observer;
 public class StatisticMonitor implements Observer {
     private long timeOfLivingIsland = 0;
     private int cycleCount = 0;
-    private int organisms = 0;
     private int aliveOrganisms = 0;
     private int killedOrganisms = 0;
     private int bornOrganisms = 0;
