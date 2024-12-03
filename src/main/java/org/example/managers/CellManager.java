@@ -36,7 +36,7 @@ public class CellManager {
     }
 
     public void addGameObject(InteractableCell cell, GameObject gameObject) {
-        if(cell != null && gameObject != null && cell.getResidents() != null) {
+        if (cell != null && gameObject != null && cell.getResidents() != null) {
             cell.addGameObjectToResidents(gameObject.getClass(), gameObject);
         } else {
             throw new IllegalArgumentException("Cell or GameObject is null");
