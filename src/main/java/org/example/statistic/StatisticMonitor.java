@@ -15,6 +15,19 @@ public class StatisticMonitor implements Observer {
     private int deathOrganisms = 0;
     private int plantAlive = 0;
 
+    private static StatisticMonitor instance;
+
+    private StatisticMonitor() {
+
+    }
+
+    public static StatisticMonitor getInstance() {
+        if (instance == null) {
+            instance = new StatisticMonitor();
+        }
+        return instance;
+    }
+
     public void printStatistics() {
         StringBuilder sb = new StringBuilder();
         countTimeOfLivingIsland();
