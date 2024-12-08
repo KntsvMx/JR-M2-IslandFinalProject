@@ -41,6 +41,7 @@ public class EntityBehaviorManager implements Subject {
         plantBehaviour = new PlantBehaviour();
         statisticMonitor = StatisticMonitor.getInstance();
         statisticCollector = StatisticCollector.getInstance();
+        addObserver(statisticMonitor);
     }
 
     public static EntityBehaviorManager getInstance() {
@@ -51,9 +52,9 @@ public class EntityBehaviorManager implements Subject {
     }
 
     public void init(GameField gameField) {
-        startSimulation(gameField);
         startTime = System.currentTimeMillis();
         statisticCollector.setGameField(gameField);
+        startSimulation(gameField);
     }
 
     private void startSimulation(GameField gameField) {
@@ -62,7 +63,6 @@ public class EntityBehaviorManager implements Subject {
                 this.growPlants(gameField);
             }
         }, 0, 10, TimeUnit.SECONDS);
-
         while (!Thread.currentThread().isInterrupted()) {
             runCycle(gameField);
         }
@@ -76,10 +76,22 @@ public class EntityBehaviorManager implements Subject {
                         .thenRun(plantBehaviour::notifyObservers);
             }
         }
+    }
 
+    private void handlePlantLifeCycle(GameField gameField) {
+        for (Cell[] cells : gameField.getCells()) {
+            for (Cell cell : cells) {
+                CompletableFuture.runAsync(() -> plantBehaviour.lifeCycle(cell), cellExecutorService)
+                        .thenRun(plantBehaviour::notifyObservers);
+            }
+        }
     }
 
     private void runCycle(GameField gameField) {
+        if (scheduledExecutor.isShutdown() || cellExecutorService.isShutdown()) {
+            return;
+        }
+
         List<CompletableFuture<Void>> cellFutures = new ArrayList<>();
 
         for (Cell[] cells : gameField.getCells()) {
@@ -88,11 +100,14 @@ public class EntityBehaviorManager implements Subject {
                 cellFutures.add(future);
             }
         }
+        scheduledExecutor.schedule(() -> handlePlantLifeCycle(gameField), 0, TimeUnit.SECONDS);
 
         CompletableFuture.allOf(cellFutures.toArray(new CompletableFuture[0])).join();
         cycleCount++;
         observers.forEach(Observer::updateCycle);
 
+        scheduledExecutor.schedule(statisticCollector::notifyObservers, 0, TimeUnit.SECONDS);
+        scheduledExecutor.schedule(this::collectStatistics, 0, TimeUnit.SECONDS);
 
         if (isAllAnimalsDead(gameField)) {
             stopSimulation();
@@ -101,8 +116,7 @@ public class EntityBehaviorManager implements Subject {
             observers.forEach(observer -> observer.updateTime(startTime, endTime));
         }
 
-        scheduledExecutor.schedule(statisticCollector::notifyObservers, 0, TimeUnit.SECONDS);
-        scheduledExecutor.schedule(this::collectStatistics, 0, TimeUnit.SECONDS);
+
     }
 
     //    TODO: realize statistic observing and print
@@ -137,6 +151,9 @@ public class EntityBehaviorManager implements Subject {
     }
 
     public void stopSimulation() {
+        scheduledExecutor.schedule(statisticCollector::notifyObservers, 0, TimeUnit.SECONDS);
+        scheduledExecutor.schedule(this::collectStatistics, 0, TimeUnit.SECONDS);
+
         scheduledExecutor.shutdown();
         cellExecutorService.shutdown();
         try {
