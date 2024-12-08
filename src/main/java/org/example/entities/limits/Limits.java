@@ -8,4 +8,6 @@ public class Limits {
     private int maxSpeed;
     private int maxFood;
     private int maxAge;
+    private int minWeight;
+    private int minHealth;
 }
