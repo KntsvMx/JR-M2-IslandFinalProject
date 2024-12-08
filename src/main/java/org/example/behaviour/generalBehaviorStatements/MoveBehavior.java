@@ -25,7 +25,7 @@ public class MoveBehavior {
 
             if (animal.getHealth() >= 60 && availableSpaceForSpecie(randomCellFromClosest, maxAmount)) {
                 animal.move(randomCellFromClosest);
-                animal.changeHealthAfterAction();
+                animal.changeHealthAfterMove();
             }
         } finally {
             lock.unlock();
