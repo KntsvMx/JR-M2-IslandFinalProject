@@ -6,6 +6,7 @@ import org.example.entities.map.InteractableCell;
 import org.example.entities.plants.Plant;
 import org.example.factory.OrganismFactory;
 import org.example.managers.CellManager;
+import org.example.statistic.StatisticMonitor;
 import org.example.statistic.interfaces.Observer;
 import org.example.statistic.interfaces.Subject;
 import org.jetbrains.annotations.Nullable;
@@ -18,10 +19,14 @@ public class ReproduceBehavior implements Subject {
     private List<Observer> observers = new ArrayList<>();
     private final CellManager cellManager;
     private final ReentrantLock lock = new ReentrantLock();
-    private final OrganismFactory organismFactory = OrganismFactory.getInstance();
+    private final OrganismFactory organismFactory;
+    private final StatisticMonitor statisticMonitor;
 
     public ReproduceBehavior() {
         cellManager = CellManager.getInstance();
+        organismFactory = OrganismFactory.getInstance();
+        statisticMonitor = StatisticMonitor.getInstance();
+        addObserver(statisticMonitor);
     }
 
     public void reproduce(GameObject gameObject) {
@@ -49,10 +54,11 @@ public class ReproduceBehavior implements Subject {
         if (canReproduce(animal, currentCell, sameSpecie)) {
             GameObject newAnimal = organismFactory.create(animal.getClass());
             cellManager.addGameObject(currentCell, newAnimal);
+            animal.changeHealthAfterReproduce();
             observers.forEach(Observer::updateBorn);
-        } else {
-            throw new IllegalArgumentException("Species not available");
         }
+        // TODO 2024-12-08(added) probably need to add some logger here to log that animals can't reproduce
+
     }
 
 
@@ -60,7 +66,6 @@ public class ReproduceBehavior implements Subject {
         if (availableSpaceForSpecie(currentCell, plantGameObject.getMaxAmount())) {
             GameObject newPlant = organismFactory.create(plantGameObject.getClass());
             cellManager.addGameObject(currentCell, newPlant);
-            observers.forEach(Observer::updateBorn);
         } else {
             throw new IllegalArgumentException("Plants not available");
         }
@@ -83,7 +88,7 @@ public class ReproduceBehavior implements Subject {
     }
 
     private static boolean isEnoughHealth(Animal sameSpecie, Animal gameObject) {
-        final int MINIMUM_HEALTH_FOR_REPRODUCE = 70;
+        final int MINIMUM_HEALTH_FOR_REPRODUCE = 80;
         return gameObject.getHealth() > MINIMUM_HEALTH_FOR_REPRODUCE && sameSpecie.getHealth() > MINIMUM_HEALTH_FOR_REPRODUCE;
     }
 
