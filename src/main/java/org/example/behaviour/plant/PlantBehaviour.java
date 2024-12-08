@@ -1,6 +1,5 @@
 package org.example.behaviour.plant;
 
-import org.example.abstraction.interfaces.GameObject;
 import org.example.behaviour.generalBehaviorStatements.ReproduceBehavior;
 import org.example.entities.map.Cell;
 import org.example.entities.plants.Plant;
@@ -9,7 +8,7 @@ import org.example.statistic.interfaces.Subject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.function.Consumer;
 
 public class PlantBehaviour implements Subject {
     List<Observer> observers = new ArrayList<>();
@@ -34,12 +33,32 @@ public class PlantBehaviour implements Subject {
 
     }
 
-    public void grow(Cell cell) {
-        for (Map.Entry<Class<? extends GameObject>, List<GameObject>> gameObject : cell.getResidents().entrySet()) {
-            if (Plant.class.isAssignableFrom(gameObject.getKey())) {
-                reproduceBehavior.reproduce((Plant) gameObject.getValue().stream()
-                        .filter(gameObject1 -> gameObject1 instanceof Plant).findFirst().get());
+    public void lifeCycle(Cell cell) {
+        processPlants(cell, plant -> {
+            synchronized (plant) {
+                plant.decreaseHealthOverTime();
+                if (plant.getHealth() <= 5) {
+                    plant.isDeath();
+                }
             }
-        };
+        });
+    }
+
+    public void grow(Cell cell) {
+        processPlants(cell, plant -> {
+            synchronized (plant) {
+                reproduceBehavior.reproduce(plant);
+            }
+        });
+    }
+
+    private void processPlants(Cell cell, Consumer<Plant> action) {
+        cell.getResidents().forEach((key, value) -> {
+            if (Plant.class.isAssignableFrom(key)) {
+                Plant plant = (Plant) value.stream()
+                        .filter(gameObject1 -> gameObject1 instanceof Plant).findFirst().get();
+                action.accept(plant);
+            }
+        });
     }
 }

@@ -29,6 +29,8 @@ public abstract class Plant implements Organism, Eatable, Cloneable{
     private int health;
     private int age;
 
+    private final int MINIMAL_HEALTH = 5;
+
     @Override
     public void play() {
 
@@ -47,6 +49,17 @@ public abstract class Plant implements Organism, Eatable, Cloneable{
             return (Plant) this.clone();
         } catch (CloneNotSupportedException e) {
             throw new AssertionError("Cloning not supported", e);
+        }
+    }
+
+    public void decreaseHealthOverTime() {
+        this.setHealth(this.getHealth() - 20);
+    }
+
+    @Override
+    public void isDeath() {
+        if (this.getHealth() <= MINIMAL_HEALTH) {
+            this.setAlive(false);
         }
     }
 }
