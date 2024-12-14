@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Setter
 public class StatisticCollector implements Subject {
@@ -20,13 +21,19 @@ public class StatisticCollector implements Subject {
     private List<Observer> observers = new ArrayList<>();
 
     private GameField gameField;
-    private StatisticCollector() {
+    private volatile AtomicInteger amountOfAnimals = new AtomicInteger(0);
+    private volatile AtomicInteger amountOfPlants = new AtomicInteger(0);
+    private volatile AtomicInteger aliveOrganisms = new AtomicInteger(0);
 
+    private final StatisticMonitor statisticMonitor = StatisticMonitor.getInstance();
+
+    private StatisticCollector() {
     }
 
     public static StatisticCollector getInstance() {
         if (instance == null) {
             instance = new StatisticCollector();
+            instance.initializeObservers();
         }
         return instance;
     }
@@ -44,14 +51,25 @@ public class StatisticCollector implements Subject {
     @Override
     public void notifyObservers() {
         for (Observer observer : observers) {
-            observer.updateAnimal(countAmountOfAnimals());
-            observer.updatePlant(countAmountOfPlants());
-            observer.updateAlive(countAliveOrganisms());
+            observer.updateAnimal(amountOfAnimals.get());
+            observer.updatePlant(amountOfPlants.get());
+            observer.updateAlive(aliveOrganisms.get());
         }
     }
 
+    public void collectStatisticsFromMap() {
+        amountOfAnimals.set(countAmountOfAnimals());
+        amountOfPlants.set(countAmountOfPlants());
+        aliveOrganisms.set(countAliveOrganisms());
+        notifyObservers();
+    }
+
+    private void initializeObservers() {
+        observers.add(statisticMonitor);
+    }
+
     private int countAmountOfPlants() {
-        return (int) Arrays.stream(gameField.getCells())
+        return (int) Arrays.stream(this.gameField.getCells())
                 .flatMap(Arrays::stream)
                 .flatMap(cell -> getPlants(cell).stream())
                 .filter(Plant::isAlive)
