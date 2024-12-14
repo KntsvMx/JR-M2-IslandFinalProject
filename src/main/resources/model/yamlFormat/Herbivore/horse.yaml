@@ -5,9 +5,11 @@ limits:
   maxSpeed: 4
   maxFood: 4
   maxAge: 10
+  minWeight: 10
+  minHealth: 5
 target:
   stringTargetMatrix:
     grass: 100
 weight: 200
 health: 100
-age: 1
+age: 2

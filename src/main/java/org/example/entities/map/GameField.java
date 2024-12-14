@@ -6,7 +6,7 @@ import lombok.Setter;
 import org.example.abstraction.annotations.Config;
 
 
-@Config(fileName = "model/yamlFormat/gameField.yaml")
+@Config(fileName = "model/yamlFormat/Map/gameField.yaml")
 @Getter
 @NoArgsConstructor
 public class GameField {
@@ -15,5 +15,5 @@ public class GameField {
     private int height;
 
     @Setter
-    private Cell[][] cells;
+    private volatile Cell[][] cells;
 }

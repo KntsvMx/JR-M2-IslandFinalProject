@@ -9,10 +9,9 @@ import org.example.abstraction.annotations.Config;
 import org.example.abstraction.annotations.GameObjectEntity;
 import org.example.abstraction.interfaces.GameObject;
 import org.example.entities.animals.abstractions.Herbivore.Herbivore;
-import org.example.entities.map.Cell;
 
 @GameObjectEntity
-@Config(fileName = "model/yamlFormat/horse.yaml")
+@Config(fileName = "model/yamlFormat/Herbivore/horse.yaml")
 @NoArgsConstructor
 @SuperBuilder
 @Setter
@@ -26,6 +25,7 @@ public class Horse extends Herbivore {
     public GameObject reproduce() {
         return Horse.builder()
                 .limits(getLimits())
+                .target(getTarget())
                 .health(100)
                 .age(1)
                 .isAlive(true)
