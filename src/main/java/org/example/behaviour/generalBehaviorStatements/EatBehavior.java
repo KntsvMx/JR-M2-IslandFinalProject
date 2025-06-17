@@ -70,7 +70,7 @@ public class EatBehavior implements Subject {
         Random random = new Random();
         int randomIndex = random.nextInt(100);
         int currentWeight = animal.getWeight();
-        int SUBTRACTING_WEIGHT = - 10;
+        int SUBTRACTING_WEIGHT = -5;
         InteractableCell interactableCell = animal.getCell();
         interactableCell.getLock().lock();
         try {
@@ -88,7 +88,7 @@ public class EatBehavior implements Subject {
                 observers.forEach(Observer::updateKilled);
                 cellManager.removeGameObject(interactableCell, (GameObject) eatenObject);
             } else {
-                animal.changeHealthAfterAction();
+//                animal.changeHealthAfterAction();
                 animal.setWeight(currentWeight - SUBTRACTING_WEIGHT);
             }
         } finally {

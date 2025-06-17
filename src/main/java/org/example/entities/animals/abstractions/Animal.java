@@ -45,13 +45,13 @@ public abstract class Animal implements Organism, Movable, Eatable, Cloneable {
     private int age;
 
 
-    private final int HEALTH_AFTER_MOVE = 20;
-    private final int HEALTH_AFTER_HUNT = 15;
-    private final int HEALTH_AFTER_REPRODUCE = 40;
-    private final int HEALTH_AFTER_EXCHANGE = 10;
+    private final int HEALTH_AFTER_MOVE = 10;
+    private final int HEALTH_AFTER_HUNT = 5;
+    private final int HEALTH_AFTER_REPRODUCE = 20;
+    private final int HEALTH_AFTER_EXCHANGE = 15;
     private final int HEALTH_IF_NOT_ENOUGH_WEIGHT = 20;
 
-    private final int WEIGHT_TO_HEALTH_EXCHANGE = 15;
+    private final int WEIGHT_TO_HEALTH_EXCHANGE = 10;
 
     @Override
     public void play() {

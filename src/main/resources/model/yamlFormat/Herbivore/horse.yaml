@@ -1,7 +1,7 @@
 cell: ~
 limits:
   maxWeight: 400
-  maxAmount: 20
+  maxAmount: 10
   maxSpeed: 4
   maxFood: 4
   maxAge: 10

@@ -71,7 +71,15 @@ public class ReproduceBehavior implements Subject {
     }
 
     private boolean canReproduce(Animal animal, InteractableCell currentCell, Animal sameSpecie) {
-        return isEnoughHealth(sameSpecie, animal) && sameSpecie != null && SpaceUtil.availableSpaceForSpecie(currentCell, animal.getLimits().getMaxAmount());
+        return isEnoughHealth(sameSpecie, animal)
+                && sameSpecie != null
+                && SpaceUtil.availableSpaceForSpecie(currentCell, animal.getLimits().getMaxAmount())
+                && isMatureEnough(animal, sameSpecie);
+    }
+
+    private boolean isMatureEnough(Animal animal, Animal sameSpecie) {
+        int minReproductionAge = 2;
+        return animal.getAge() >= minReproductionAge && sameSpecie.getAge() >= minReproductionAge;
     }
 
     private static @Nullable InteractableCell getInteractableCell(GameObject gameObject) {
