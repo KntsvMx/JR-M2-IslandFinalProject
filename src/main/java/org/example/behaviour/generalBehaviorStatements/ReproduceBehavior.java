@@ -9,6 +9,7 @@ import org.example.managers.CellManager;
 import org.example.statistic.StatisticMonitor;
 import org.example.statistic.interfaces.Observer;
 import org.example.statistic.interfaces.Subject;
+import org.example.utils.SpaceUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -58,12 +59,10 @@ public class ReproduceBehavior implements Subject {
             observers.forEach(Observer::updateBorn);
         }
         // TODO 2024-12-08(added) probably need to add some logger here to log that animals can't reproduce
-
     }
 
-
     private void reproducePlant(Plant plantGameObject, InteractableCell currentCell) {
-        if (availableSpaceForSpecie(currentCell, plantGameObject.getMaxAmount())) {
+        if (SpaceUtil.availableSpaceForSpecie(currentCell, plantGameObject.getMaxAmount())) {
             GameObject newPlant = organismFactory.create(plantGameObject.getClass());
             cellManager.addGameObject(currentCell, newPlant);
         } else {
@@ -72,7 +71,7 @@ public class ReproduceBehavior implements Subject {
     }
 
     private boolean canReproduce(Animal animal, InteractableCell currentCell, Animal sameSpecie) {
-        return isEnoughHealth(sameSpecie, animal) && sameSpecie != null && availableSpaceForSpecie(currentCell, animal.getLimits().getMaxAmount());
+        return isEnoughHealth(sameSpecie, animal) && sameSpecie != null && SpaceUtil.availableSpaceForSpecie(currentCell, animal.getLimits().getMaxAmount());
     }
 
     private static @Nullable InteractableCell getInteractableCell(GameObject gameObject) {
@@ -92,11 +91,6 @@ public class ReproduceBehavior implements Subject {
         return gameObject.getHealth() > MINIMUM_HEALTH_FOR_REPRODUCE && sameSpecie.getHealth() > MINIMUM_HEALTH_FOR_REPRODUCE;
     }
 
-    private boolean availableSpaceForSpecie(InteractableCell sameSpecie, Integer maxAmount) {
-        int amountOfSpecie = sameSpecie.getResidents().getOrDefault(sameSpecie.getClass(), List.of()).size();
-        return amountOfSpecie < maxAmount;
-    }
-
     private static @Nullable Animal getSameSpecie(Animal animalGameObject) {
         return animalGameObject.getCell().getResidents().get(animalGameObject.getClass())
                 .stream()
@@ -105,7 +99,6 @@ public class ReproduceBehavior implements Subject {
                 .filter(animal -> animal.getClass().equals(animalGameObject.getClass()))
                 .findFirst()
                 .orElse(null);
-
     }
 
     @Override
@@ -120,6 +113,6 @@ public class ReproduceBehavior implements Subject {
 
     @Override
     public void notifyObservers() {
-
+        // Implementation will be added when Subject interface is updated
     }
 }
