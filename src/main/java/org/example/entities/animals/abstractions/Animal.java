@@ -45,13 +45,16 @@ public abstract class Animal implements Organism, Movable, Eatable, Cloneable {
     private int age;
 
 
-    private final int HEALTH_AFTER_MOVE = 10;
+    private final int HEALTH_AFTER_MOVE = 8;
     private final int HEALTH_AFTER_HUNT = 5;
     private final int HEALTH_AFTER_REPRODUCE = 20;
     private final int HEALTH_AFTER_EXCHANGE = 15;
     private final int HEALTH_IF_NOT_ENOUGH_WEIGHT = 20;
 
     private final int WEIGHT_TO_HEALTH_EXCHANGE = 10;
+
+    private int consecutiveActions = 0;
+    public static final int MAX_CONSECUTIVE_ACTIONS = 3;
 
     @Override
     public void play() {
@@ -147,6 +150,23 @@ public abstract class Animal implements Organism, Movable, Eatable, Cloneable {
     private void changeHealthIfNotEnoughWeight() {
         isDeath();
         this.health -= HEALTH_IF_NOT_ENOUGH_WEIGHT;
+    }
+
+    public void recoverHealth() {
+        if (this.getHealth() < 100 && this.getWeight() > this.getLimits().getMinWeight()) {
+            int recoveryAmount = 3;
+            int weightCost = 1;
+            this.setHealth(Math.min(100, this.getHealth() + recoveryAmount));
+            this.setWeight(this.getWeight() - weightCost);
+        }
+    }
+
+    public void incrementConsecutiveActions() {
+        this.consecutiveActions++;
+    }
+
+    public void resetConsecutiveActions() {
+        this.consecutiveActions = 0;
     }
 
 }

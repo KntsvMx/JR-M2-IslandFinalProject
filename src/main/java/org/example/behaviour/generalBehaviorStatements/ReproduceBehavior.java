@@ -95,7 +95,7 @@ public class ReproduceBehavior implements Subject {
     }
 
     private static boolean isEnoughHealth(Animal sameSpecie, Animal gameObject) {
-        final int MINIMUM_HEALTH_FOR_REPRODUCE = 80;
+        final int MINIMUM_HEALTH_FOR_REPRODUCE = 50;
         return gameObject.getHealth() > MINIMUM_HEALTH_FOR_REPRODUCE && sameSpecie.getHealth() > MINIMUM_HEALTH_FOR_REPRODUCE;
     }
 
