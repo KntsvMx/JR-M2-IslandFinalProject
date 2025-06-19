@@ -36,7 +36,7 @@ public class GameObjectScanner {
     public Class<GameField> getGameFieldClass() {
         return reflections.getTypesAnnotatedWith(Config.class)
                 .stream()
-                .filter(GameField.class::equals)  // Проверяем, что класс — это сам GameField
+                .filter(GameField.class::equals)
                 .map(c -> (Class<GameField>) c)
                 .findFirst()
                 .orElseThrow(() -> new InitGameException("GameField must have @Config annotation"));
