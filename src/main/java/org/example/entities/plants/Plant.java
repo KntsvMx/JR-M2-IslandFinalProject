@@ -57,7 +57,7 @@ public abstract class Plant implements Organism, Eatable, Cloneable{
     }
 
     @Override
-    public void isDeath() {
+    public void checkDeath() {
         if (this.getHealth() <= MINIMAL_HEALTH) {
             this.setAlive(false);
         }

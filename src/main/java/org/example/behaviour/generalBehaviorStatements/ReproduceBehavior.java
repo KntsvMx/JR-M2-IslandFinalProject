@@ -55,7 +55,7 @@ public class ReproduceBehavior implements Subject {
         if (canReproduce(animal, currentCell, sameSpecie)) {
             GameObject newAnimal = organismFactory.create(animal.getClass());
             cellManager.addGameObject(currentCell, newAnimal);
-            animal.changeHealthAfterReproduce();
+            animal.decreaseHealthAfterReproduction();
             observers.forEach(Observer::updateBorn);
         }
         // TODO 2024-12-08(added) probably need to add some logger here to log that animals can't reproduce

@@ -38,7 +38,7 @@ public class PlantBehaviour implements Subject {
             synchronized (plant) {
                 plant.decreaseHealthOverTime();
                 if (plant.getHealth() <= 5) {
-                    plant.isDeath();
+                    plant.checkDeath();
                 }
             }
         });

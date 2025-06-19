@@ -47,9 +47,9 @@ public abstract class Animal implements Organism, Movable, Eatable, Cloneable {
 
     private final int HEALTH_AFTER_MOVE = 8;
     private final int HEALTH_AFTER_HUNT = 5;
-    private final int HEALTH_AFTER_REPRODUCE = 20;
+    private final int HEALTH_AFTER_REPRODUCE = 25;
     private final int HEALTH_AFTER_EXCHANGE = 15;
-    private final int HEALTH_IF_NOT_ENOUGH_WEIGHT = 20;
+    private final int HEALTH_IF_NOT_ENOUGH_WEIGHT = 15;
 
     private final int WEIGHT_TO_HEALTH_EXCHANGE = 10;
 
@@ -105,7 +105,7 @@ public abstract class Animal implements Organism, Movable, Eatable, Cloneable {
             setHealth(healthAfterExchange);
             setWeight(weightAfterExchange);
         } else if (this.weight <= limits.getMinWeight()) {
-            changeHealthIfNotEnoughWeight();
+            decreaseHealthIfNotEnoughWeight();
         }
     }
 
@@ -119,37 +119,42 @@ public abstract class Animal implements Organism, Movable, Eatable, Cloneable {
     }
 
     @Override
-//    TODO: 2024-12-08(added) need to rename this method to right version
-    public void isDeath() {
-        if (this.getHealth() <= limits.getMinHealth()) {
-            this.setAlive(false);
-            this.getCell().removeGameObjectFromResidents(this);
-//            TODO: 2024-12-08(added) need to resolve the issue with observer pattern notifying about death
-            StatisticMonitor.getInstance().updateDeath();
+    public void checkDeath() {
+        if (shouldDie()) {
+            die();
+            // TODO: 2025-06-19(added) need to implement observer notification about this event
         }
     }
 
-    //    TODO: 2024-12-08(added) need to change method isDeath to another with similar functionality
+    private void die() {
+        this.setAlive(false);
+        this.getCell().removeGameObjectFromResidents(this);
+//            TODO: 2024-12-08(added) need to resolve the issue with observer pattern notifying about death
+        StatisticMonitor.getInstance().updateDeath();
+    }
+
+    private boolean shouldDie() {
+        return this.getHealth() == 0 && this.getWeight() <= this.limits.getMinWeight() || this.getWeight() >= this.limits.getMinWeight() && this.getCell() != null;
+    }
+
     public void changeHealthAfterMove() {
-        isDeath();
-        this.health -= HEALTH_AFTER_MOVE;
+        checkDeath();
+        this.setHealth(this.getHealth() - HEALTH_AFTER_MOVE);
     }
 
-    //    TODO: 2024-12-08(added) need to change method isDeath to another with similar functionality
     public void changeHealthAfterHunt() {
-        isDeath();
-        this.health -= HEALTH_AFTER_HUNT;
+        checkDeath();
+        this.setHealth(this.getHealth() - HEALTH_AFTER_HUNT);
     }
 
-    //    TODO: 2024-12-08(added) need to change method isDeath to another with similar functionality
-    public void changeHealthAfterReproduce() {
-        this.health -= HEALTH_AFTER_REPRODUCE;
+    public void decreaseHealthAfterReproduction() {
+        this.setHealth(this.getHealth() - HEALTH_AFTER_REPRODUCE);
+        checkDeath();
     }
 
-    //    TODO: 2024-12-08(added) need to change method isDeath to another with similar functionality
-    private void changeHealthIfNotEnoughWeight() {
-        isDeath();
-        this.health -= HEALTH_IF_NOT_ENOUGH_WEIGHT;
+    private void decreaseHealthIfNotEnoughWeight() {
+        this.setHealth(this.getHealth() - HEALTH_IF_NOT_ENOUGH_WEIGHT);
+        checkDeath();
     }
 
     public void recoverHealth() {
