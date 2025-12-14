@@ -93,6 +93,7 @@ public abstract class Animal implements Organism, Movable, Eatable, Cloneable {
             this.setAlive(false);
             this.setHealth(0);
             this.getCell().removeGameObjectFromResidents(this);
+            StatisticMonitor.getInstance().updateKilled();
         } finally {
             lock.unlock();
         }
@@ -121,7 +122,7 @@ public abstract class Animal implements Organism, Movable, Eatable, Cloneable {
 
     @Override
     public void checkDeath() {
-        if (shouldDie()) {
+        if (shouldDie() && isAlive) {
             die();
             // TODO: 2025-06-19(added) need to implement observer notification about this event
         }
@@ -148,7 +149,6 @@ public abstract class Animal implements Organism, Movable, Eatable, Cloneable {
 
     public void changeHealthAfterMove() {
         this.setHealth(this.getHealth() - HEALTH_AFTER_MOVE);
-        checkDeath();
     }
 
     public void changeHealthAfterHunt() {

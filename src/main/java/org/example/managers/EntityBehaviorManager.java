@@ -133,6 +133,7 @@ public class EntityBehaviorManager implements Subject {
     //    TODO: realize statistic observing and print
     private void collectStatistics() {
         System.out.println("Сбор статистики");
+        statisticCollector.collectStatisticsFromMap();
         statisticMonitor.printStatistics();
     }
 

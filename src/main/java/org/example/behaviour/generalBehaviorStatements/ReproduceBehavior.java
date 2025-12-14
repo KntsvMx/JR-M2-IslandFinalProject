@@ -19,7 +19,6 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ReproduceBehavior implements Subject {
     private List<Observer> observers = new ArrayList<>();
     private final CellManager cellManager;
-    private final ReentrantLock lock = new ReentrantLock();
     private final OrganismFactory organismFactory;
     private final StatisticMonitor statisticMonitor;
 
@@ -31,7 +30,6 @@ public class ReproduceBehavior implements Subject {
     }
 
     public void reproduce(GameObject gameObject) {
-        lock.lock();
         InteractableCell currentCell = getInteractableCell(gameObject);
 
         if (currentCell != null) {
@@ -46,7 +44,6 @@ public class ReproduceBehavior implements Subject {
             }
         } finally {
             currentCell.getLock().unlock();
-            lock.unlock();
         }
     }
 

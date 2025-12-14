@@ -78,7 +78,7 @@ public class StatisticCollector implements Subject {
     }
 
     private List<Plant> getPlants(Cell cell) {
-        for (Map.Entry<Class<? extends GameObject>, ConcurrentLinkedDeque<GameObject>> gameObject : cell.getResidents().entrySet()) {
+        for (Map.Entry<Class<? extends GameObject>, List<GameObject>> gameObject : cell.getResidents().entrySet()) {
             if (Plant.class.isAssignableFrom(gameObject.getKey())) {
                 return gameObject.getValue().stream()
                         .filter(gameObject1 -> gameObject1 instanceof Plant)
@@ -99,7 +99,7 @@ public class StatisticCollector implements Subject {
 
 //  TODO: 2024-12-01(added) need to refactor code to avoid code duplication in StatisticCollector and EntityBehaviorManager classes
     private List<Animal> getAnimals(Cell cell) {
-        for (Map.Entry<Class<? extends GameObject>, ConcurrentLinkedDeque<GameObject>> gameObject : cell.getResidents().entrySet()) {
+        for (Map.Entry<Class<? extends GameObject>, List<GameObject>> gameObject : cell.getResidents().entrySet()) {
             if (Animal.class.isAssignableFrom(gameObject.getKey())) {
                 return gameObject.getValue().stream()
                         .filter(gameObject1 -> gameObject1 instanceof Animal)

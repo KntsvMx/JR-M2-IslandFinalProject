@@ -10,14 +10,12 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class MoveBehavior {
     private final CellManager cellManager;
-    private final ReentrantLock lock = new ReentrantLock();
 
     public MoveBehavior() {
         cellManager = CellManager.getInstance();
     }
 
     public void move(Animal animal) {
-        lock.lock();
         try {
             InteractableCell currentCell = animal.getCell();
 //            TODO: 2025-08-05 (added) Add randomness for the next cell, so Animal could stay in the same cell
@@ -29,7 +27,7 @@ public class MoveBehavior {
                 animal.changeHealthAfterMove();
             }
         } finally {
-            lock.unlock();
+
         }
     }
 }

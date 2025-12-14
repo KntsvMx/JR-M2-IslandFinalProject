@@ -6,6 +6,7 @@ import org.example.entities.interfaces.Eatable;
 import org.example.entities.map.InteractableCell;
 import org.example.entities.plants.Plant;
 import org.example.managers.CellManager;
+import org.example.statistic.StatisticMonitor;
 import org.example.statistic.interfaces.Observer;
 import org.example.statistic.interfaces.Subject;
 
@@ -19,19 +20,19 @@ import java.util.concurrent.locks.ReentrantLock;
 public class EatBehavior implements Subject {
     private List<Observer> observers = new ArrayList<>();
     private final CellManager cellManager;
-    private final ReentrantLock lock = new ReentrantLock();
 
     public EatBehavior() {
         cellManager = CellManager.getInstance();
+        StatisticMonitor statisticMonitor = StatisticMonitor.getInstance();
+        addObserver(statisticMonitor);
     }
 
     public void findFood(Animal animal) {
 
-        if (isHungry(animal)) {
+        if (!isHungry(animal)) {
             return;
         }
 
-        lock.lock();
         try {
             Map<Class<? extends GameObject>, List<GameObject>> residents = animal.getCell().getResidents();
             Map<Class<? extends GameObject>, Integer> targets = animal.getTarget().getTargetMatrix();
@@ -58,7 +59,6 @@ public class EatBehavior implements Subject {
                 }
             }
         } finally {
-            lock.unlock();
         }
     }
 
@@ -80,7 +80,7 @@ public class EatBehavior implements Subject {
                 throw new IllegalArgumentException("Game object not found");
             }
 
-            if (randomIndex >= targetValue || targetValue == 100) {
+            if (randomIndex < targetValue) {
                 Eatable eatenObject = (Eatable) gameObject;
                 eatenObject.beEaten();
 
