@@ -8,6 +8,8 @@ import org.example.abstraction.interfaces.GameObject;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -22,9 +24,9 @@ public class Cell implements InteractableCell{
     private final long UID = serialUID++;
 
     @Setter
-    private Map<Class<? extends GameObject>, List<GameObject>> residents;
+    private ConcurrentHashMap<Class<? extends GameObject>, List<GameObject>> residents;
 
-    private final List<Cell> nextCells = new CopyOnWriteArrayList<>();
+    private final CopyOnWriteArrayList<Cell> nextCells = new CopyOnWriteArrayList<>();
 
     public void setNext(Cell cell) {
         nextCells.add(cell);

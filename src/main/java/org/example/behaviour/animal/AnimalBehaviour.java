@@ -6,8 +6,6 @@ import org.example.behaviour.generalBehaviorStatements.MoveBehavior;
 import org.example.behaviour.generalBehaviorStatements.ReproduceBehavior;
 import org.example.entities.animals.abstractions.Animal;
 
-import static org.example.entities.animals.abstractions.Animal.MAX_CONSECUTIVE_ACTIONS;
-
 
 public class AnimalBehaviour {
     private final MoveBehavior moveBehavior;
@@ -21,11 +19,11 @@ public class AnimalBehaviour {
     }
 
     public void act(Animal animal) {
-        if (animal.getConsecutiveActions() >= MAX_CONSECUTIVE_ACTIONS) {
-            animal.recoverHealth();
-            animal.resetConsecutiveActions();
-            return;
-        }
+//        if (animal.getConsecutiveActions() >= MAX_CONSECUTIVE_ACTIONS) {
+//            animal.recoverHealth();
+//            animal.resetConsecutiveActions();
+//            return;
+//        }
 
         // Check if animal is too weak for actions
         if (animal.getHealth() < 20) {
@@ -37,7 +35,7 @@ public class AnimalBehaviour {
         eatBehavior.findFood(animal);
         reproduceBehavior.reproduce(animal);
         animal.exchangeWeightToHealth();
-        animal.isDeath();
+        animal.checkDeath();
 
         animal.incrementConsecutiveActions();
     }

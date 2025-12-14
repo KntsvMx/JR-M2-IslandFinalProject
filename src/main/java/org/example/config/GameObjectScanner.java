@@ -10,6 +10,8 @@ import org.reflections.Reflections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+// This class created to scanning future entities across the project and help to identify what should be generated for the future, and return set of classes
+
 public class GameObjectScanner {
     private static GameObjectScanner instance;
     private final Reflections reflections = new Reflections("org.example");

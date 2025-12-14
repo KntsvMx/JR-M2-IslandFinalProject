@@ -113,6 +113,9 @@ public class EatBehavior implements Subject {
         return 0;
     }
 
+
+//Observer methods
+
     @Override
     public void addObserver(Observer observer) {
         observers.add(observer);

@@ -5,6 +5,9 @@ import org.example.abstraction.interfaces.GameObject;
 import java.util.HashMap;
 import java.util.Map;
 
+// Factory pattern helps to create different organism during simulation process 
+
+// Perhaps good idea to change getPrototypes to Lombok annotation
 public class OrganismFactory implements PrototypeFactory<GameObject> {
     private static OrganismFactory instance;
     private final Map<Class<? extends GameObject>, GameObject> prototypes = new HashMap<>();
