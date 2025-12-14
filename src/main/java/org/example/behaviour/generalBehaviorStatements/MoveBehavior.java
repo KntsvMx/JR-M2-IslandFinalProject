@@ -20,6 +20,7 @@ public class MoveBehavior {
         lock.lock();
         try {
             InteractableCell currentCell = animal.getCell();
+//            TODO: 2025-08-05 (added) Add randomness for the next cell, so Animal could stay in the same cell
             Cell randomCellFromClosest = cellManager.getRandomCellFromClosest(currentCell);
             int maxAmount = animal.getLimits().getMaxAmount();
 

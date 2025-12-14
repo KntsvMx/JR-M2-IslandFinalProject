@@ -17,16 +17,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 
+//Be aware of future changes for this class as now there are
+// a lot of problem might appear during either due redesign or completely change of this file
+
+//TODO: Too huge class, which have to be divided by any chance and separate his functionality
+
 public class EntityBehaviorManager implements Subject {
     private static EntityBehaviorManager instance;
     private final AnimalBehaviour animalBehaviour;
     private final PlantBehaviour plantBehaviour;
 
+    //Perhaps idea to make it final is good
+    //Think about divide observation and other classes from BehaviorManager as it's not related to behavior
     private List<Observer> observers = new ArrayList<>();
 
+    //Future threads executors
+    //Possibly capable to divide and create other class for threads in this case to prevent misrepresenting class with its main functionality
     private final ScheduledExecutorService scheduledExecutor;
     private final ExecutorService cellExecutorService;
 
+    //Monitoring simulation process
+    //The same status as fields above
     private final StatisticMonitor statisticMonitor;
     private final StatisticCollector statisticCollector;
     private int cycleCount = 0;

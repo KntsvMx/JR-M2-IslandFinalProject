@@ -12,8 +12,12 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.net.URL;
 
+// Helping to load prototypes of the entities for the future simulation, loadPrototype help to identify right class,
+// then getConfigFilePath is taking filename and path and final step is create a game object.
+
 public class PrototypeLoader {
     private static PrototypeLoader instance;
+    // Perhaps to make it final is good idea
     private ObjectMapper objectMapper = new YAMLMapper();
 
     private PrototypeLoader() {

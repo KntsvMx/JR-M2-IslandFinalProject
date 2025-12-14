@@ -52,7 +52,7 @@ public class ResidentsGenerator {
 
             initializeCells(organisms, cell);
             residents.put(prototype, organisms);
-            cell.setResidents(residents);
+            cell.setResidents((ConcurrentHashMap<Class<? extends GameObject>, List<GameObject>>) residents);
         }
     }
 

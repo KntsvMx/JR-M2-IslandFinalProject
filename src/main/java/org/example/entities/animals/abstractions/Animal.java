@@ -12,6 +12,7 @@ import org.example.entities.map.InteractableCell;
 import org.example.entities.target.Target;
 import org.example.statistic.StatisticMonitor;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -53,7 +54,7 @@ public abstract class Animal implements Organism, Movable, Eatable, Cloneable {
 
     private final int WEIGHT_TO_HEALTH_EXCHANGE = 10;
 
-    private int consecutiveActions = 0;
+    private AtomicInteger consecutiveActions = new AtomicInteger(0);
     public static final int MAX_CONSECUTIVE_ACTIONS = 3;
 
     @Override
@@ -134,17 +135,25 @@ public abstract class Animal implements Organism, Movable, Eatable, Cloneable {
     }
 
     private boolean shouldDie() {
-        return this.getHealth() == 0 && this.getWeight() <= this.limits.getMinWeight() || this.getWeight() >= this.limits.getMinWeight() && this.getCell() != null;
+        return isEnoughHealthAndWeight() || isEnoughWeightToSurvive();
+    }
+    //TODO: 2025-08-07 (added) refactor this method to be more readable
+    private boolean isEnoughWeightToSurvive() {
+        return this.getWeight() >= this.limits.getMinWeight() && this.getCell() != null;
+    }
+    //TODO: 2025-08-07 (added) refactor this method to be more readable
+    private boolean isEnoughHealthAndWeight() {
+        return this.getHealth() == 0 && this.getWeight() <= this.limits.getMinWeight();
     }
 
     public void changeHealthAfterMove() {
-        checkDeath();
         this.setHealth(this.getHealth() - HEALTH_AFTER_MOVE);
+        checkDeath();
     }
 
     public void changeHealthAfterHunt() {
-        checkDeath();
         this.setHealth(this.getHealth() - HEALTH_AFTER_HUNT);
+        checkDeath();
     }
 
     public void decreaseHealthAfterReproduction() {
@@ -167,11 +176,11 @@ public abstract class Animal implements Organism, Movable, Eatable, Cloneable {
     }
 
     public void incrementConsecutiveActions() {
-        this.consecutiveActions++;
+        this.consecutiveActions.incrementAndGet();
     }
 
     public void resetConsecutiveActions() {
-        this.consecutiveActions = 0;
+        this.consecutiveActions.set(0);
     }
 
 }
