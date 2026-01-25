@@ -26,18 +26,8 @@ public class EntityBehaviorManager implements Subject {
     private static EntityBehaviorManager instance;
     private final AnimalBehaviour animalBehaviour;
     private final PlantBehaviour plantBehaviour;
-
-    //Perhaps idea to make it final is good
-    //Think about divide observation and other classes from BehaviorManager as it's not related to behavior
     private List<Observer> observers = new ArrayList<>();
 
-    //Future threads executors
-    //Possibly capable to divide and create other class for threads in this case to prevent misrepresenting class with its main functionality
-    private final ScheduledExecutorService scheduledExecutor;
-    private final ExecutorService cellExecutorService;
-
-    //Monitoring simulation process
-    //The same status as fields above
     private final StatisticMonitor statisticMonitor;
     private final StatisticCollector statisticCollector;
     private int cycleCount = 0;
@@ -46,8 +36,6 @@ public class EntityBehaviorManager implements Subject {
     private long endTime = 0;
 
     private EntityBehaviorManager() {
-        scheduledExecutor = Executors.newScheduledThreadPool(2);
-        cellExecutorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         animalBehaviour = new AnimalBehaviour();
         plantBehaviour = new PlantBehaviour();
         statisticMonitor = StatisticMonitor.getInstance();
@@ -69,56 +57,50 @@ public class EntityBehaviorManager implements Subject {
     }
 
     private void startSimulation(GameField gameField) {
-        scheduledExecutor.scheduleAtFixedRate(() -> {
-            if (cycleCount % 2 == 0) {
-                this.growPlants(gameField);
+        ThreadPoolManager.getInstance().scheduleAtFixedRate(() -> {
+            try {
+                runCycle(gameField);
+
+                if (cycleCount %2 == 0) {
+                    growPlants(gameField);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        }, 0, 10, TimeUnit.SECONDS);
-        while (!Thread.currentThread().isInterrupted()) {
-            runCycle(gameField);
-        }
+        }, 0, 1000, TimeUnit.MILLISECONDS);
     }
 
     private void growPlants(GameField gameField) {
-        System.out.println("Запуск задачи роста растений");
-        for (Cell[] cells : gameField.getCells()) {
-            for (Cell cell : cells) {
-                CompletableFuture.runAsync(() -> plantBehaviour.grow(cell), cellExecutorService)
-                        .thenRun(plantBehaviour::notifyObservers);
+        ThreadPoolManager.getInstance().submit( () -> {
+            System.out.println("Запуск задачи роста растений");
+            for (Cell[] cells : gameField.getCells()) {
+                for (Cell cell : cells) {
+                    plantBehaviour.grow(cell);
+                }
             }
-        }
+            plantBehaviour.notifyObservers();
+        });
+
     }
 
     private void handlePlantLifeCycle(GameField gameField) {
-        for (Cell[] cells : gameField.getCells()) {
-            for (Cell cell : cells) {
-                CompletableFuture.runAsync(() -> plantBehaviour.lifeCycle(cell), cellExecutorService)
-                        .thenRun(plantBehaviour::notifyObservers);
-            }
-        }
+
     }
 
     private void runCycle(GameField gameField) {
-        if (scheduledExecutor.isShutdown() || cellExecutorService.isShutdown()) {
-            return;
-        }
+        ThreadPoolManager threadPool = ThreadPoolManager.getInstance();
 
-        List<CompletableFuture<Void>> cellFutures = new ArrayList<>();
-
-        for (Cell[] cells : gameField.getCells()) {
-            for (Cell cell : cells) {
-                CompletableFuture<Void> future = CompletableFuture.runAsync(() -> processCell(cell), cellExecutorService);
-                cellFutures.add(future);
+        for(Cell[] row: gameField.getCells()) {
+            for(Cell cell: row) {
+                threadPool.submit(() -> processCell(cell));
             }
         }
-        scheduledExecutor.schedule(() -> handlePlantLifeCycle(gameField), 0, TimeUnit.SECONDS);
 
-        CompletableFuture.allOf(cellFutures.toArray(new CompletableFuture[0])).join();
         cycleCount++;
         observers.forEach(Observer::updateCycle);
 
-        scheduledExecutor.schedule(statisticCollector::notifyObservers, 0, TimeUnit.SECONDS);
-        scheduledExecutor.schedule(this::collectStatistics, 0, TimeUnit.SECONDS);
+        statisticCollector.notifyObservers();
+        collectStatistics();
 
         if (isAllAnimalsDead(gameField)) {
             stopSimulation();
@@ -126,7 +108,6 @@ public class EntityBehaviorManager implements Subject {
             System.out.println("Game over");
             observers.forEach(observer -> observer.updateTime(startTime, endTime));
         }
-
 
     }
 
@@ -137,22 +118,31 @@ public class EntityBehaviorManager implements Subject {
         statisticMonitor.printStatistics();
     }
 
-    private synchronized void processCell(Cell cell) {
-        for (Animal animal : getAllAnimals(cell)) {
-            animalBehaviour.act(animal);
+    private void processCell(Cell cell) {
+        //TODO: consider whether this lock is needed here or not (perhaps it's might create some performance issues)
+        cell.getLock().lock();
+        try {
+            for (Animal animal : getAllAnimals(cell)) {
+                animalBehaviour.act(animal);
+            }
+        } finally {
+            cell.getLock().unlock();
         }
     }
 
     private List<Animal> getAllAnimals(Cell cell) {
-        for (Map.Entry<Class<? extends GameObject>, List<GameObject>> gameObject : cell.getResidents().entrySet()) {
-            if (Animal.class.isAssignableFrom(gameObject.getKey())) {
-                return gameObject.getValue().stream()
-                        .filter(gameObject1 -> gameObject1 instanceof Animal)
-                        .map(gameObject1 -> (Animal) gameObject1)
-                        .toList();
+        List<Animal> allAnimals = new ArrayList<>();
+
+        for (Map.Entry<Class<? extends GameObject>, List<GameObject>> entry : cell.getResidents().entrySet()) {
+            if (Animal.class.isAssignableFrom(entry.getKey())) {
+                for (GameObject obj : entry.getValue()) {
+                    if(obj instanceof Animal) {
+                        allAnimals.add((Animal) obj);
+                    }
+                }
             }
         }
-        return List.of();
+        return allAnimals;
     }
 
     private boolean isAllAnimalsDead(GameField gameField) {
@@ -163,21 +153,9 @@ public class EntityBehaviorManager implements Subject {
     }
 
     public void stopSimulation() {
-        scheduledExecutor.schedule(statisticCollector::notifyObservers, 0, TimeUnit.SECONDS);
-        scheduledExecutor.schedule(this::collectStatistics, 0, TimeUnit.SECONDS);
-
-        scheduledExecutor.shutdown();
-        cellExecutorService.shutdown();
-        try {
-            if (!scheduledExecutor.awaitTermination(1, TimeUnit.MINUTES)) {
-                scheduledExecutor.shutdownNow();
-            }
-            if (!cellExecutorService.awaitTermination(1, TimeUnit.MINUTES)) {
-                cellExecutorService.shutdownNow();
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        statisticCollector.notifyObservers();
+        collectStatistics();
+        ThreadPoolManager.getInstance().shutDown();
     }
 
     @Override

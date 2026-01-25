@@ -62,29 +62,6 @@ public abstract class Animal implements Organism, Movable, Eatable, Cloneable {
 
     }
 
-    @Override
-    public void move(InteractableCell targetCell) {
-        ReentrantLock currentLock = cell.getLock();
-        ReentrantLock targetLock = targetCell.getLock();
-
-        // To avoid deadlock
-        if (System.identityHashCode(currentLock) < System.identityHashCode(targetLock)) {
-            currentLock.lock();
-            targetLock.lock();
-        } else {
-            targetLock.lock();
-            currentLock.lock();
-        }
-
-        try {
-            targetCell.addGameObjectToResidents(this.getClass(), this);
-            cell.removeGameObjectFromResidents(this);
-            cell = targetCell;
-        } finally {
-            currentLock.unlock();
-            targetLock.unlock();
-        }
-    }
 
     @Override
     public void beEaten() {

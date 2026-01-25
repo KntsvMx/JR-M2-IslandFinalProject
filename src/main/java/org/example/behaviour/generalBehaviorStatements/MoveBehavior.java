@@ -5,7 +5,6 @@ import org.example.entities.map.Cell;
 import org.example.entities.map.InteractableCell;
 import org.example.managers.CellManager;
 import org.example.utils.SpaceUtil;
-
 import java.util.concurrent.locks.ReentrantLock;
 
 public class MoveBehavior {
@@ -15,19 +14,38 @@ public class MoveBehavior {
         cellManager = CellManager.getInstance();
     }
 
-    public void move(Animal animal) {
-        try {
-            InteractableCell currentCell = animal.getCell();
-//            TODO: 2025-08-05 (added) Add randomness for the next cell, so Animal could stay in the same cell
-            Cell randomCellFromClosest = cellManager.getRandomCellFromClosest(currentCell);
-            int maxAmount = animal.getLimits().getMaxAmount();
+    public void move(Animal animal, Cell fromCell, Cell toCell) {
+        ReentrantLock firstLock;
+        ReentrantLock secondLock;
 
-            if (animal.getHealth() >= 60 && SpaceUtil.availableSpaceForSpecie(randomCellFromClosest, maxAmount)) {
-                animal.move(randomCellFromClosest);
-                animal.changeHealthAfterMove();
+        if (System.identityHashCode(fromCell) < System.identityHashCode(toCell)) {
+            firstLock = fromCell.getLock();
+            secondLock = toCell.getLock();
+        } else {
+            firstLock = toCell.getLock();
+            secondLock = fromCell.getLock();
+        }
+
+        firstLock.lock();
+        try {
+            secondLock.lock();
+            try {
+                boolean hasSpace = SpaceUtil.availableSpaceForSpecie(toCell, animal.getLimits().getMaxAmount());
+                boolean isHere = fromCell.getResidents().contains(animal);
+
+                if (hasSpace && isHere) {
+                   fromCell.removeGameObjectFromResidents(animal);
+                   toCell.addGameObjectToResidents(animal.getClass(), animal);
+
+                   animal.setCell(toCell);
+
+                   animal.changeHealthAfterMove();
+                }
+            } finally {
+                secondLock.unlock();
             }
         } finally {
-
+            firstLock.unlock();
         }
     }
 }

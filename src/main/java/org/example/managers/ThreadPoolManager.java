@@ -3,24 +3,40 @@ package org.example.managers;
 import java.util.concurrent.*;
 
 public class ThreadPoolManager {
-    private final ThreadPoolExecutor computationExecutor;
-    private final ScheduledExecutorService scheduledExecutor;
+    private static volatile ThreadPoolManager instance;
+    private final ScheduledExecutorService scheduledPool;
+    private final ExecutorService servicePool;
+
+
 
     public ThreadPoolManager() {
-        computationExecutor = new ThreadPoolExecutor(
-                Runtime.getRuntime().availableProcessors() / 2,
-                Runtime.getRuntime().availableProcessors(),
-                60L, TimeUnit.SECONDS,
-                new ArrayBlockingQueue<>(1000),
-                new ThreadPoolExecutor.CallerRunsPolicy()
-        );
-
-        scheduledExecutor = Executors.newScheduledThreadPool(2);
+        this.servicePool = Executors.newFixedThreadPool(4);
+        this.scheduledPool = Executors.newScheduledThreadPool(2);
     }
 
+    public static ThreadPoolManager getInstance() {
+        if (instance == null) {
+            synchronized (ThreadPoolManager.class) {
+                if(instance == null) {
+                    instance = new ThreadPoolManager();
+                }
+            }
+        }
+        return instance;
+    }
+
+    public void submit(Runnable task) {
+        servicePool.submit(task);
+    }
+
+    public void scheduleAtFixedRate(Runnable task, long initialDelay, long period, TimeUnit unit) {
+        scheduledPool.scheduleAtFixedRate(task, initialDelay, period, unit);
+    }
+
+
     public void shutDown() {
-        computationExecutor.shutdown();
-        scheduledExecutor.shutdown();
+        servicePool.shutdown();
+        scheduledPool.shutdown();
     }
 
 }

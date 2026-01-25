@@ -76,11 +76,13 @@ public class ReproduceBehavior implements Subject {
 
     private boolean isMatureEnough(Animal animal, Animal sameSpecie) {
         int minReproductionAge = 2;
+        //TODO: check this logic later
         return animal.getAge() >= minReproductionAge && sameSpecie.getAge() >= minReproductionAge;
     }
 
     private static @Nullable InteractableCell getInteractableCell(GameObject gameObject) {
         InteractableCell currentCell = null;
+        //TODO: investigate whether we can avoid this instance of check (don't really understand why we need it here)
         if (gameObject instanceof Animal) {
             currentCell = ((Animal) gameObject).getCell();
         } else if (gameObject instanceof Plant) {

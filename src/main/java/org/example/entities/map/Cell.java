@@ -5,17 +5,16 @@ import lombok.Getter;
 import lombok.Setter;
 import org.example.abstraction.interfaces.GameObject;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Builder
 @Getter
-public class Cell implements InteractableCell{
+public class Cell implements InteractableCell {
     private static long serialUID = 1L;
     @Getter
     private final ReentrantLock lock = new ReentrantLock();
@@ -24,9 +23,9 @@ public class Cell implements InteractableCell{
     private final long UID = serialUID++;
 
     @Setter
-    private ConcurrentHashMap<Class<? extends GameObject>, List<GameObject>> residents;
+    private HashMap<Class<? extends GameObject>, List<GameObject>> residents;
 
-    private final CopyOnWriteArrayList<Cell> nextCells = new CopyOnWriteArrayList<>();
+    private final List<Cell> nextCells = new CopyOnWriteArrayList<>();
 
     public void setNext(Cell cell) {
         nextCells.add(cell);
@@ -44,21 +43,15 @@ public class Cell implements InteractableCell{
     }
 
     public void removeGameObjectFromResidents(GameObject object) {
-       if (residents.get(object.getClass()) != null && !residents.get(object.getClass()).isEmpty()) {
-            residents.get(object.getClass()).remove(object);
-        } else {
-            throw new IllegalArgumentException("Object not found");
+        List<GameObject> speciesList = residents.get(object.getClass());
+        if (speciesList != null) {
+            speciesList.remove(object);
         }
-
     }
 
     public void addGameObjectToResidents(Class<? extends GameObject> gameObjectClass, GameObject object) {
-        residents.computeIfPresent(gameObjectClass, (key, list) -> {
-            list.add(object);
-            object.setCell(this);
-            return list;
-        });
-    }
-
-
+        residents.computeIfAbsent(gameObjectClass, k -> new ArrayList<>()).add(object);
+        object.setCell(this);
+    };
 }
+

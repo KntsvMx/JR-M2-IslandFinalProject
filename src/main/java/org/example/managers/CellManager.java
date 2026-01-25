@@ -1,5 +1,7 @@
 package org.example.managers;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.example.abstraction.interfaces.GameObject;
 import org.example.entities.map.Cell;
 import org.example.entities.map.GameField;
@@ -7,6 +9,8 @@ import org.example.entities.map.InteractableCell;
 import org.example.generators.CellGenerator;
 import org.example.generators.ResidentsGenerator;
 
+@Getter
+@Setter
 public class CellManager {
     private static CellManager instance;
     private final CellGenerator cellGenerator;
@@ -29,6 +33,10 @@ public class CellManager {
         cells = cellGenerator.generateCells(gameField);
         residentsGenerator.generateNewResidence(cells);
         gameField.setCells(cells);
+    }
+
+    public Cell[] getAllCells() {
+        return
     }
 
     public Cell getRandomCellFromClosest(InteractableCell cell) {

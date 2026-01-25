@@ -102,7 +102,7 @@ public class EatBehavior implements Subject {
                 .findAny()
                 .orElse(null);
     }
-
+    // Potentially create a NutritionalValueCalculator interface for different calculation strategies or create a class for dividing this logic
     private int calculateNutritionalValue(GameObject gameObject) {
         if (gameObject instanceof Animal) {
             return ((Animal) gameObject).getWeight();
