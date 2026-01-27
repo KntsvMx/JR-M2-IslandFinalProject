@@ -31,7 +31,7 @@ public class MoveBehavior {
             secondLock.lock();
             try {
                 boolean hasSpace = SpaceUtil.availableSpaceForSpecie(toCell, animal.getLimits().getMaxAmount());
-                boolean isHere = fromCell.getResidents().contains(animal);
+                boolean isHere = fromCell.getResidents().containsKey(animal);
 
                 if (hasSpace && isHere) {
                    fromCell.removeGameObjectFromResidents(animal);

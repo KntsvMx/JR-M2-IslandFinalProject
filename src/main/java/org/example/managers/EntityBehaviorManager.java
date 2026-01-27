@@ -10,6 +10,7 @@ import org.example.statistic.StatisticCollector;
 import org.example.statistic.StatisticMonitor;
 import org.example.statistic.interfaces.Observer;
 import org.example.statistic.interfaces.Subject;
+import org.example.tasks.CellTask;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -92,7 +93,8 @@ public class EntityBehaviorManager implements Subject {
 
         for(Cell[] row: gameField.getCells()) {
             for(Cell cell: row) {
-                threadPool.submit(() -> processCell(cell));
+                CellTask cellTask = new CellTask(cell, animalBehaviour, plantBehaviour);
+                threadPool.submit(cellTask);
             }
         }
 
@@ -102,7 +104,7 @@ public class EntityBehaviorManager implements Subject {
         statisticCollector.notifyObservers();
         collectStatistics();
 
-        if (isAllAnimalsDead(gameField)) {
+        if (gameField.isEcosystemDead()) {
             stopSimulation();
             endTime = System.currentTimeMillis();
             System.out.println("Game over");
@@ -118,39 +120,6 @@ public class EntityBehaviorManager implements Subject {
         statisticMonitor.printStatistics();
     }
 
-    private void processCell(Cell cell) {
-        //TODO: consider whether this lock is needed here or not (perhaps it's might create some performance issues)
-        cell.getLock().lock();
-        try {
-            for (Animal animal : getAllAnimals(cell)) {
-                animalBehaviour.act(animal);
-            }
-        } finally {
-            cell.getLock().unlock();
-        }
-    }
-
-    private List<Animal> getAllAnimals(Cell cell) {
-        List<Animal> allAnimals = new ArrayList<>();
-
-        for (Map.Entry<Class<? extends GameObject>, List<GameObject>> entry : cell.getResidents().entrySet()) {
-            if (Animal.class.isAssignableFrom(entry.getKey())) {
-                for (GameObject obj : entry.getValue()) {
-                    if(obj instanceof Animal) {
-                        allAnimals.add((Animal) obj);
-                    }
-                }
-            }
-        }
-        return allAnimals;
-    }
-
-    private boolean isAllAnimalsDead(GameField gameField) {
-        return Arrays.stream(gameField.getCells())
-                .flatMap(Arrays::stream)
-                .flatMap(cell -> getAllAnimals(cell).stream())
-                .noneMatch(Animal::isAlive);
-    }
 
     public void stopSimulation() {
         statisticCollector.notifyObservers();

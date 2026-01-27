@@ -67,9 +67,9 @@ public abstract class Animal implements Organism, Movable, Eatable, Cloneable {
     public void beEaten() {
         lock.lock();
         try {
-            this.setAlive(false);
-            this.setHealth(0);
-            this.getCell().removeGameObjectFromResidents(this);
+            this.isAlive = false;
+            this.health = 0;
+            this.cell.removeGameObjectFromResidents(this);
             StatisticMonitor.getInstance().updateKilled();
         } finally {
             lock.unlock();
