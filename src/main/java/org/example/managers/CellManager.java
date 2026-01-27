@@ -35,10 +35,6 @@ public class CellManager {
         gameField.setCells(cells);
     }
 
-    public Cell[] getAllCells() {
-        return
-    }
-
     public Cell getRandomCellFromClosest(InteractableCell cell) {
         return cell.getRandomCellFromClosest();
     }

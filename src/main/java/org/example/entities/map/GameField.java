@@ -16,4 +16,15 @@ public class GameField {
 
     @Setter
     private volatile Cell[][] cells;
+
+    public boolean isEcosystemDead() {
+        for(Cell[] row : cells){
+            for(Cell cell : row) {
+                if(cell.hasAliveAnimals()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 }

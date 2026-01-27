@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.example.abstraction.interfaces.GameObject;
+import org.example.entities.animals.abstractions.Animal;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,5 +54,16 @@ public class Cell implements InteractableCell {
         residents.computeIfAbsent(gameObjectClass, k -> new ArrayList<>()).add(object);
         object.setCell(this);
     };
+
+    public boolean hasAliveAnimals() {
+        for(List<GameObject> list : residents.values()) {
+            for(GameObject obj : list) {
+                if (obj instanceof Animal && ((Animal) obj).isAlive()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }
 
