@@ -25,15 +25,17 @@ public class CellTask implements Runnable{
 
     @Override
     public void run() {
-        cell.getLock().lock();
         try {
-            processAnimals();
-
-            processPlants();
+            cell.getLock().lock();
+            try {
+                processAnimals();
+                processPlants();
+            } finally {
+                cell.getLock().unlock();
+            }
         } catch (Exception e) {
+            System.err.println("Error processing cell: " + e.getMessage());
             e.printStackTrace();
-        } finally {
-            cell.getLock().unlock();
         }
     }
 

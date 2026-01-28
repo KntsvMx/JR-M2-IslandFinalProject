@@ -33,31 +33,20 @@ public class PlantBehaviour implements Subject {
 
     }
 
-    public void lifeCycle(Cell cell) {
-        processPlants(cell, plant -> {
-            synchronized (plant) {
-                plant.decreaseHealthOverTime();
-                if (plant.getHealth() <= 5) {
-                    plant.checkDeath();
-                }
-            }
-        });
-    }
-
     public void grow(Cell cell) {
         processPlants(cell, plant -> {
-            synchronized (plant) {
-                reproduceBehavior.reproduce(plant);
-            }
+            reproduceBehavior.reproduce(plant, cell);
         });
     }
 
     private void processPlants(Cell cell, Consumer<Plant> action) {
         cell.getResidents().forEach((key, value) -> {
             if (Plant.class.isAssignableFrom(key)) {
-                Plant plant = (Plant) value.stream()
-                        .filter(gameObject1 -> gameObject1 instanceof Plant).findFirst().get();
-                action.accept(plant);
+                value.stream()
+                        .filter(obj -> obj instanceof Plant)
+                        .map(obj -> (Plant) obj)
+                        .findFirst()
+                        .ifPresent(action);
             }
         });
     }

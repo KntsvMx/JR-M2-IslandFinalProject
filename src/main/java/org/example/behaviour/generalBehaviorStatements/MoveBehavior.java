@@ -2,9 +2,10 @@ package org.example.behaviour.generalBehaviorStatements;
 
 import org.example.entities.animals.abstractions.Animal;
 import org.example.entities.map.Cell;
-import org.example.entities.map.InteractableCell;
 import org.example.managers.CellManager;
 import org.example.utils.SpaceUtil;
+
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class MoveBehavior {
@@ -15,37 +16,33 @@ public class MoveBehavior {
     }
 
     public void move(Animal animal, Cell fromCell, Cell toCell) {
-        ReentrantLock firstLock;
-        ReentrantLock secondLock;
+        ReentrantLock targetLock = toCell.getLock();
+        boolean gotLock = false;
 
-        if (System.identityHashCode(fromCell) < System.identityHashCode(toCell)) {
-            firstLock = fromCell.getLock();
-            secondLock = toCell.getLock();
-        } else {
-            firstLock = toCell.getLock();
-            secondLock = fromCell.getLock();
+        try {
+            gotLock = targetLock.tryLock(50, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return;
         }
 
-        firstLock.lock();
-        try {
-            secondLock.lock();
+
+        if (gotLock) {
             try {
                 boolean hasSpace = SpaceUtil.availableSpaceForSpecie(toCell, animal.getLimits().getMaxAmount());
-                boolean isHere = fromCell.getResidents().containsKey(animal);
+                boolean isHere = fromCell.getResidents().containsValue(animal);
 
                 if (hasSpace && isHere) {
-                   fromCell.removeGameObjectFromResidents(animal);
-                   toCell.addGameObjectToResidents(animal.getClass(), animal);
+                    fromCell.removeGameObjectFromResidents(animal);
+                    toCell.addGameObjectToResidents(animal.getClass(), animal);
 
-                   animal.setCell(toCell);
+                    animal.setCell(toCell);
 
-                   animal.changeHealthAfterMove();
+                    animal.changeHealthAfterMove();
                 }
             } finally {
-                secondLock.unlock();
+                targetLock.unlock();
             }
-        } finally {
-            firstLock.unlock();
         }
     }
 }

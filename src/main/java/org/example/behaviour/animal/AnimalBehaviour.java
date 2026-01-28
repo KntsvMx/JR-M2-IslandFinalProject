@@ -5,6 +5,8 @@ import org.example.behaviour.generalBehaviorStatements.EatBehavior;
 import org.example.behaviour.generalBehaviorStatements.MoveBehavior;
 import org.example.behaviour.generalBehaviorStatements.ReproduceBehavior;
 import org.example.entities.animals.abstractions.Animal;
+import org.example.entities.map.Cell;
+import org.example.entities.map.InteractableCell;
 
 
 public class AnimalBehaviour {
@@ -19,24 +21,22 @@ public class AnimalBehaviour {
     }
 
     public void act(Animal animal) {
-//        if (animal.getConsecutiveActions() >= MAX_CONSECUTIVE_ACTIONS) {
-//            animal.recoverHealth();
-//            animal.resetConsecutiveActions();
-//            return;
-//        }
-
-        // Check if animal is too weak for actions
-        if (animal.getHealth() < 20) {
-            animal.recoverHealth();
+        if (!animal.isAlive()) {
             return;
         }
 
-        moveBehavior.move(animal);
-        eatBehavior.findFood(animal);
-        reproduceBehavior.reproduce(animal);
-        animal.exchangeWeightToHealth();
-        animal.checkDeath();
+        InteractableCell currentCell = animal.getCell();
+        eatBehavior.eat(animal, currentCell);
+        reproduceBehavior.reproduce(animal, currentCell);
 
-        animal.incrementConsecutiveActions();
+        Cell targetCell = (Cell) currentCell.getRandomCellFromClosest();
+        if (targetCell != null && targetCell != currentCell) {
+            moveBehavior.move(animal, (Cell) currentCell, targetCell);
+        }
+        animal.reduceWeightPerTick();
+        if (animal.getWeight() <= 0) {
+            System.out.println(animal.getClass().getSimpleName() + " has died due to weight loss.");
+            animal.checkDeath();
+        }
     }
 }

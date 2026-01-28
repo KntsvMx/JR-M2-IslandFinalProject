@@ -1,9 +1,7 @@
 package org.example.managers;
 
-import org.example.abstraction.interfaces.GameObject;
 import org.example.behaviour.animal.AnimalBehaviour;
 import org.example.behaviour.plant.PlantBehaviour;
-import org.example.entities.animals.abstractions.Animal;
 import org.example.entities.map.Cell;
 import org.example.entities.map.GameField;
 import org.example.statistic.StatisticCollector;
@@ -13,15 +11,10 @@ import org.example.statistic.interfaces.Subject;
 import org.example.tasks.CellTask;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
-//Be aware of future changes for this class as now there are
-// a lot of problem might appear during either due redesign or completely change of this file
-
-//TODO: Too huge class, which have to be divided by any chance and separate his functionality
 
 public class EntityBehaviorManager implements Subject {
     private static EntityBehaviorManager instance;
@@ -62,7 +55,7 @@ public class EntityBehaviorManager implements Subject {
             try {
                 runCycle(gameField);
 
-                if (cycleCount %2 == 0) {
+                if (cycleCount % 2 == 0) {
                     growPlants(gameField);
                 }
             } catch (Exception e) {
@@ -72,7 +65,7 @@ public class EntityBehaviorManager implements Subject {
     }
 
     private void growPlants(GameField gameField) {
-        ThreadPoolManager.getInstance().submit( () -> {
+        ThreadPoolManager.getInstance().submit(() -> {
             System.out.println("Запуск задачи роста растений");
             for (Cell[] cells : gameField.getCells()) {
                 for (Cell cell : cells) {
@@ -90,11 +83,20 @@ public class EntityBehaviorManager implements Subject {
 
     private void runCycle(GameField gameField) {
         ThreadPoolManager threadPool = ThreadPoolManager.getInstance();
+        List<Future<?>> futures = new ArrayList<>();
 
-        for(Cell[] row: gameField.getCells()) {
-            for(Cell cell: row) {
+        for (Cell[] row : gameField.getCells()) {
+            for (Cell cell : row) {
                 CellTask cellTask = new CellTask(cell, animalBehaviour, plantBehaviour);
-                threadPool.submit(cellTask);
+                futures.add(threadPool.submit(cellTask));
+            }
+        }
+
+        for(Future<?> future : futures) {
+            try {
+                future.get();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
