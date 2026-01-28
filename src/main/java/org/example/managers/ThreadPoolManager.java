@@ -25,8 +25,8 @@ public class ThreadPoolManager {
         return instance;
     }
 
-    public void submit(Runnable task) {
-        servicePool.submit(task);
+    public Future<?> submit(Runnable task) {
+        return servicePool.submit(task);
     }
 
     public void scheduleAtFixedRate(Runnable task, long initialDelay, long period, TimeUnit unit) {

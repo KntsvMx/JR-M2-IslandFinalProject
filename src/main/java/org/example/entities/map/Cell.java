@@ -9,8 +9,8 @@ import org.example.entities.animals.abstractions.Animal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Builder
@@ -38,7 +38,7 @@ public class Cell implements InteractableCell {
     }
 
     public Cell getRandomCellFromClosest() {
-        Random random = new Random();
+        ThreadLocalRandom random = ThreadLocalRandom.current();
         int randomIndex = random.nextInt(nextCells.size());
         return nextCells.get(randomIndex);
     }
@@ -53,11 +53,13 @@ public class Cell implements InteractableCell {
     public void addGameObjectToResidents(Class<? extends GameObject> gameObjectClass, GameObject object) {
         residents.computeIfAbsent(gameObjectClass, k -> new ArrayList<>()).add(object);
         object.setCell(this);
-    };
+    }
+
+    ;
 
     public boolean hasAliveAnimals() {
-        for(List<GameObject> list : residents.values()) {
-            for(GameObject obj : list) {
+        for (List<GameObject> list : residents.values()) {
+            for (GameObject obj : list) {
                 if (obj instanceof Animal && ((Animal) obj).isAlive()) {
                     return true;
                 }

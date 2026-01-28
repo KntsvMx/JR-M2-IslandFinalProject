@@ -9,6 +9,7 @@ import org.example.abstraction.annotations.Config;
 import org.example.abstraction.annotations.GameObjectEntity;
 import org.example.abstraction.interfaces.GameObject;
 import org.example.entities.animals.abstractions.Herbivore.Herbivore;
+import org.example.entities.map.InteractableCell;
 
 @GameObjectEntity
 @Config(fileName = "model/yamlFormat/Herbivore/horse.yaml")
@@ -30,5 +31,10 @@ public class Horse extends Herbivore {
                 .age(1)
                 .isAlive(true)
                 .build();
+    }
+
+    @Override
+    public void move(InteractableCell cell) {
+
     }
 }

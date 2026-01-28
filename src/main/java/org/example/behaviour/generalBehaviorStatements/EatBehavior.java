@@ -2,15 +2,11 @@ package org.example.behaviour.generalBehaviorStatements;
 
 import org.example.abstraction.interfaces.GameObject;
 import org.example.entities.animals.abstractions.Animal;
-import org.example.entities.interfaces.Eatable;
 import org.example.entities.map.InteractableCell;
 import org.example.entities.plants.Plant;
 import org.example.managers.CellManager;
-import org.example.statistic.StatisticMonitor;
 import org.example.statistic.interfaces.Observer;
-import org.example.statistic.interfaces.Subject;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +22,7 @@ public class EatBehavior {
     }
 
     public void eat(Animal animal, InteractableCell cell) {
-        if(!isHungry(animal)) {
+        if (!isHungry(animal)) {
             return;
         }
 
@@ -38,12 +34,12 @@ public class EatBehavior {
 
         Optional<GameObject> foodOpt = findFood(animal, cell, diet);
 
-        if(foodOpt.isPresent()) {
+        if (foodOpt.isPresent()) {
             GameObject victim = foodOpt.get();
 
             int chanceToEat = diet.getOrDefault(victim.getClass(), 0);
-            int diceRoll = ThreadLocalRandom.current().nextInt(100) + 1;
-
+//            int diceRoll = ThreadLocalRandom.current().nextInt(100) + 1;
+            int diceRoll = 0;
             if (diceRoll <= chanceToEat) {
                 performEat(animal, victim, cell);
             }
@@ -68,13 +64,13 @@ public class EatBehavior {
     }
 
     private void performEat(Animal predator, GameObject victim, InteractableCell cell) {
-        int foodWeight = victim instanceof Animal ? ((Animal) victim).getWeight() : ((Plant) victim).getWeight();
+        double foodWeight = victim instanceof Animal ? ((Animal) victim).getWeight() : ((Plant) victim).getWeight();
         int currentHealth = predator.getHealth();
 
-        int newHealth = Math.min(100, currentHealth + (foodWeight * 10));
+        int newHealth = Math.min(100, currentHealth + (int) (foodWeight * 10));
         predator.setHealth(newHealth);
 
-        if(victim instanceof Animal) {
+        if (victim instanceof Animal) {
             ((Animal) victim).beEaten();
         }
 

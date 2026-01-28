@@ -7,6 +7,7 @@ import org.example.entities.map.Cell;
 import org.example.entities.plants.Plant;
 import org.example.factory.OrganismFactory;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -21,7 +22,7 @@ public class ResidentsGenerator {
     }
 
     public Map<Class<? extends GameObject>, List<GameObject>> generateNewResidence(Cell[][] cells) {
-        Map<Class<? extends GameObject>, List<GameObject>> residents = new ConcurrentHashMap<>();
+        Map<Class<? extends GameObject>, List<GameObject>> residents = new HashMap<>();
         Map<Class<? extends GameObject>, GameObject> prototypes = organismFactory.getPrototypes();
 
         for (Cell[] cell : cells) {
@@ -52,7 +53,7 @@ public class ResidentsGenerator {
 
             initializeCells(organisms, cell);
             residents.put(prototype, organisms);
-            cell.setResidents((ConcurrentHashMap<Class<? extends GameObject>, List<GameObject>>) residents);
+            cell.setResidents((HashMap<Class<? extends GameObject>, List<GameObject>>) residents);
         }
     }
 

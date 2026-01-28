@@ -41,7 +41,7 @@ public abstract class Animal implements Organism, Movable, Eatable, Cloneable {
 
     private String icon;
     private boolean isAlive = true;
-    private int weight;
+    private double weight;
     private int health;
     private int age;
 
@@ -78,7 +78,7 @@ public abstract class Animal implements Organism, Movable, Eatable, Cloneable {
 
 
     public void exchangeWeightToHealth() {
-        int weightAfterExchange = this.getWeight() - WEIGHT_TO_HEALTH_EXCHANGE;
+        double weightAfterExchange = this.getWeight() - WEIGHT_TO_HEALTH_EXCHANGE;
         int healthAfterExchange = this.getHealth() + HEALTH_AFTER_EXCHANGE;
         if (this.weight < limits.getMaxWeight()) {
             setHealth(healthAfterExchange);
@@ -152,12 +152,9 @@ public abstract class Animal implements Organism, Movable, Eatable, Cloneable {
         }
     }
 
-    public void incrementConsecutiveActions() {
-        this.consecutiveActions.incrementAndGet();
-    }
-
-    public void resetConsecutiveActions() {
-        this.consecutiveActions.set(0);
+    public void reduceWeightPerTick() {
+        double loss = this.getLimits().getMaxWeight() * 0.005;
+        this.setWeight(this.getWeight() - loss);
     }
 
 }

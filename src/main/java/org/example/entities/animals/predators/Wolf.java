@@ -9,6 +9,7 @@ import org.example.abstraction.annotations.Config;
 import org.example.abstraction.annotations.GameObjectEntity;
 import org.example.abstraction.interfaces.GameObject;
 import org.example.entities.animals.abstractions.Predator.Predator;
+import org.example.entities.map.InteractableCell;
 
 @GameObjectEntity
 @Config(fileName = "model/yamlFormat/Predators/wolf.yaml")
@@ -27,5 +28,10 @@ public class Wolf extends Predator {
                 .age(1)
                 .isAlive(true)
                 .build();
+    }
+
+    @Override
+    public void move(InteractableCell cell) {
+
     }
 }
