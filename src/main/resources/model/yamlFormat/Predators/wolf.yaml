@@ -9,7 +9,7 @@ limits:
   minHealth: 5
 target:
   stringTargetMatrix:
-      horse: 50
+      horse: 40
       deer: 15
       rabbit: 60
       mouse: 80
@@ -18,6 +18,6 @@ target:
       boar: 15
       buffalo: 10
       duck: 40
-weight: 20
+weight: 30
 health: 100
 age: 2
