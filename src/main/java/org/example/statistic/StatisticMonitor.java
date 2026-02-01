@@ -2,26 +2,29 @@ package org.example.statistic;
 
 import lombok.Setter;
 import org.example.statistic.interfaces.Observer;
+import org.example.statistic.interfaces.StatsType;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.LongAdder;
 
 @Setter
 
 public class StatisticMonitor implements Observer {
-    private AtomicLong timeOfLivingIsland = new AtomicLong(0);
-    private AtomicInteger cycleCount = new AtomicInteger(0);
-    private AtomicInteger aliveOrganisms = new AtomicInteger(0);
-    private AtomicInteger killedOrganisms = new AtomicInteger(0);
-    private AtomicInteger bornOrganisms = new AtomicInteger(0);
-    private AtomicInteger deathOrganisms = new AtomicInteger(0);
-    private AtomicInteger plantAlive = new AtomicInteger(0);
-    private AtomicInteger animalAlive = new AtomicInteger(0);
+    private final Map<StatsType, LongAdder> stats = new ConcurrentHashMap<>();
+
+    private long startTime;
 
     private static StatisticMonitor instance;
 
     private StatisticMonitor() {
-
+        for(StatsType type: StatsType.values()) {
+            stats.put(type, new LongAdder());
+        }
+        // TODO: Initialization time instantiation from Runner (when simulation starts)
+        this.startTime = System.currentTimeMillis();
     }
 
     public static StatisticMonitor getInstance() {
@@ -31,70 +34,52 @@ public class StatisticMonitor implements Observer {
         return instance;
     }
 
+    @Override
+    public void update(StatsType type, int count) {
+        stats.get(type).add(count);
+    }
+
+    public void increment(StatsType type) {
+        update(type, 1);
+    }
+
     public void printStatistics() {
+        long currentCycle = stats.get(StatsType.CYCLE_NUMBER).sum();
+        long plants = stats.get(StatsType.CURRENT_PLANTS).sum();
+        long animals = stats.get(StatsType.CURRENT_ANIMALS).sum();
+
+        long totalOrganisms = plants + animals;
+
+
         StringBuilder sb = new StringBuilder();
-        if (timeOfLivingIsland.get() != 0) {
-            countTimeOfLivingIsland();
-        }
         sb.append("____________________Current Statistics___________________\n");
-        sb.append(String.format("Current cycle: %d%n", cycleCount.get()));
+        sb.append(String.format("Current cycle: %d%n", getTimeFormatted()));
         sb.append("_________________________________________________________\n");
-        sb.append("Statistics: \n");
-        sb.append(String.format("Alive organisms: %d%n", aliveOrganisms.get()));
-        sb.append(String.format("Killed organisms: %d%n", killedOrganisms.get()));
-        sb.append(String.format("Born organisms: %d%n", bornOrganisms.get()));
-        sb.append(String.format("Death organisms: %d%n", deathOrganisms.get()));
-        sb.append(String.format("Alive plants: %d%n", plantAlive.get()));
-        sb.append(String.format("Alive animals: %d%n", animalAlive.get()));
+
+
+        sb.append(String.format("Alive plants: %d%n", plants));
+        sb.append(String.format("Alive animals: %d%n", animals));
+        sb.append(String.format("Total organisms: %d%n", totalOrganisms));
+        sb.append(String.format("/n--- Event History ---/n"));
+        sb.append(String.format("Animals born: %d%n", stats.get(StatsType.BORN_ANIMALS).sum()));
+        sb.append(String.format("Animals eaten: %d%n", stats.get(StatsType.KILLED_ANIMALS).sum()));
+        sb.append(String.format("Plants eaten: %d%n", stats.get(StatsType.EATEN_PLANT).sum()));
+
         sb.append("_________________________________________________________\n");
         System.out.print(sb);
     }
 
-    private void countTimeOfLivingIsland() {
-        long minutes = timeOfLivingIsland.get() / 60000;
-        long seconds = (timeOfLivingIsland.get() / 1000) % 60;
-        System.out.printf("Time of living island: %d minutes %d seconds%n", minutes, seconds);
+    private String getTimeFormatted() {
+        long duration = System.currentTimeMillis() - startTime;
+        long minutes = duration / 60000;
+        long seconds = (duration / 1000) % 60;
+        return String.format("%d min %d sec", minutes, seconds);
     }
 
-    @Override
-    public void updateTime(long startTime, long endTime) {
-        this.timeOfLivingIsland.set(endTime - startTime);
+    public void reset() {
+        stats.values().forEach(LongAdder::reset);
+        this.startTime = System.currentTimeMillis();
     }
 
-    @Override
-    public void updateKilled() {
-        killedOrganisms.incrementAndGet();
-        aliveOrganisms.decrementAndGet();
-    }
 
-    @Override
-    public void updateAlive(int aliveOrganisms) {
-        this.aliveOrganisms.set(aliveOrganisms);
-    }
-
-    @Override
-    public void updateBorn() {
-        bornOrganisms.incrementAndGet();
-    }
-
-    @Override
-    public void updateDeath() {
-        deathOrganisms.incrementAndGet();
-        aliveOrganisms.decrementAndGet();
-    }
-
-    @Override
-    public void updatePlant(int plantAlive) {
-        this.plantAlive.set(plantAlive);
-    }
-
-    @Override
-    public void updateAnimal(int animalAlive) {
-        this.animalAlive.set(animalAlive);
-    }
-
-    @Override
-    public void updateCycle() {
-        cycleCount.incrementAndGet();
-    }
 }
