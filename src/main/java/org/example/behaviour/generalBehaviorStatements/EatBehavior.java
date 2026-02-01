@@ -38,8 +38,7 @@ public class EatBehavior {
             GameObject victim = foodOpt.get();
 
             int chanceToEat = diet.getOrDefault(victim.getClass(), 0);
-//            int diceRoll = ThreadLocalRandom.current().nextInt(100) + 1;
-            int diceRoll = 0;
+            int diceRoll = ThreadLocalRandom.current().nextInt(100) + 1;
             if (diceRoll <= chanceToEat) {
                 performEat(animal, victim, cell);
             }

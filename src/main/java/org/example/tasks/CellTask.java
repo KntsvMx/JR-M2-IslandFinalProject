@@ -15,12 +15,14 @@ public class CellTask implements Runnable{
     private final Cell cell;
     private final AnimalBehaviour animalBehaviour;
     private final PlantBehaviour plantBehaviour;
+    private int cycleCount = 0;
 
 
-    public CellTask(Cell cell, AnimalBehaviour animalBehaviour, PlantBehaviour plantBehaviour) {
+    public CellTask(Cell cell, AnimalBehaviour animalBehaviour, PlantBehaviour plantBehaviour, int cycleCount) {
         this.cell = cell;
         this.animalBehaviour = animalBehaviour;
         this.plantBehaviour = plantBehaviour;
+        this.cycleCount = cycleCount;
     }
 
     @Override
@@ -29,7 +31,10 @@ public class CellTask implements Runnable{
             cell.getLock().lock();
             try {
                 processAnimals();
-                processPlants();
+
+                if(cycleCount % 4 == 0) {
+                    processPlants();
+                }
             } finally {
                 cell.getLock().unlock();
             }

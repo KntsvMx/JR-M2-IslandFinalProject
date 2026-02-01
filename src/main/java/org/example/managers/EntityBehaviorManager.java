@@ -54,10 +54,6 @@ public class EntityBehaviorManager implements Subject {
         ThreadPoolManager.getInstance().scheduleAtFixedRate(() -> {
             try {
                 runCycle(gameField);
-
-                if (cycleCount % 2 == 0) {
-                    growPlants(gameField);
-                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -77,17 +73,13 @@ public class EntityBehaviorManager implements Subject {
 
     }
 
-    private void handlePlantLifeCycle(GameField gameField) {
-
-    }
-
     private void runCycle(GameField gameField) {
         ThreadPoolManager threadPool = ThreadPoolManager.getInstance();
         List<Future<?>> futures = new ArrayList<>();
 
         for (Cell[] row : gameField.getCells()) {
             for (Cell cell : row) {
-                CellTask cellTask = new CellTask(cell, animalBehaviour, plantBehaviour);
+                CellTask cellTask = new CellTask(cell, animalBehaviour, plantBehaviour, cycleCount);
                 futures.add(threadPool.submit(cellTask));
             }
         }
