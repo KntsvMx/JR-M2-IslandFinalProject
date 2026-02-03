@@ -70,7 +70,6 @@ public abstract class Animal implements Organism, Movable, Eatable, Cloneable {
             this.isAlive = false;
             this.health = 0;
             this.cell.removeGameObjectFromResidents(this);
-            StatisticMonitor.getInstance().updateKilled();
         } finally {
             lock.unlock();
         }
@@ -108,8 +107,6 @@ public abstract class Animal implements Organism, Movable, Eatable, Cloneable {
     private void die() {
         this.setAlive(false);
         this.getCell().removeGameObjectFromResidents(this);
-//            TODO: 2024-12-08(added) need to resolve the issue with observer pattern notifying about death
-        StatisticMonitor.getInstance().updateDeath();
     }
 
     private boolean shouldDie() {

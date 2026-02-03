@@ -5,7 +5,9 @@ import org.example.entities.animals.abstractions.Animal;
 import org.example.entities.map.InteractableCell;
 import org.example.entities.plants.Plant;
 import org.example.managers.CellManager;
+import org.example.statistic.AbstractSubject;
 import org.example.statistic.interfaces.Observer;
+import org.example.statistic.interfaces.StatsType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,8 +15,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class EatBehavior {
-    private List<Observer> observers = new ArrayList<>();
+public class EatBehavior extends AbstractSubject {
+    private final List<Observer> observers = new ArrayList<>();
     private final CellManager cellManager;
 
     public EatBehavior() {
@@ -71,9 +73,15 @@ public class EatBehavior {
 
         if (victim instanceof Animal) {
             ((Animal) victim).beEaten();
+            notifyObservers(StatsType.KILLED_ANIMALS, 1);
+            notifyObservers(StatsType.CURRENT_ANIMALS, -1);
+        } else {
+            ((Plant) victim).beEaten();
+            notifyObservers(StatsType.EATEN_PLANT, 1);
+            notifyObservers(StatsType.CURRENT_PLANTS, -1);
         }
-
         cell.removeGameObjectFromResidents(victim);
+
     }
 
 

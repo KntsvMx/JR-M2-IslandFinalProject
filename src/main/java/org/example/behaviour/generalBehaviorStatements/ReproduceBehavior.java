@@ -6,26 +6,23 @@ import org.example.entities.map.InteractableCell;
 import org.example.entities.plants.Plant;
 import org.example.factory.OrganismFactory;
 import org.example.managers.CellManager;
-import org.example.statistic.StatisticMonitor;
+import org.example.statistic.AbstractSubject;
 import org.example.statistic.interfaces.Observer;
-import org.example.statistic.interfaces.Subject;
+import org.example.statistic.interfaces.StatsType;
 import org.example.utils.SpaceUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class ReproduceBehavior implements Subject {
+public class ReproduceBehavior extends AbstractSubject {
     private List<Observer> observers = new ArrayList<>();
     private final CellManager cellManager;
     private final OrganismFactory organismFactory;
-    private final StatisticMonitor statisticMonitor;
 
     public ReproduceBehavior() {
         cellManager = CellManager.getInstance();
         organismFactory = OrganismFactory.getInstance();
-        statisticMonitor = StatisticMonitor.getInstance();
-        addObserver(statisticMonitor);
     }
 
     public void reproduce(GameObject gameObject, InteractableCell cell) {
@@ -55,7 +52,8 @@ public class ReproduceBehavior implements Subject {
                 animal.decreaseHealthAfterReproduction();
                 partner.decreaseHealthAfterReproduction();
 
-                notifyObservers();
+                notifyObservers(StatsType.BORN_ANIMALS, 1);
+                notifyObservers(StatsType.CURRENT_ANIMALS, 1);
             }
         }
 
@@ -65,22 +63,12 @@ public class ReproduceBehavior implements Subject {
         if (SpaceUtil.availableSpaceForSpecie(currentCell, plantGameObject.getMaxAmount())) {
             GameObject newPlant = organismFactory.create(plantGameObject.getClass());
             cellManager.addGameObject(currentCell, newPlant);
+
+            notifyObservers(StatsType.BORN_PLANT, 1);
+            notifyObservers(StatsType.CURRENT_PLANTS, 1);
         } else {
             throw new IllegalArgumentException("Plants not available");
         }
-    }
-
-
-    private boolean isMatureEnough(Animal animal, Animal sameSpecie) {
-        int minReproductionAge = 2;
-        //TODO: check this logic later
-        return animal.getAge() >= minReproductionAge && sameSpecie.getAge() >= minReproductionAge;
-    }
-
-
-    private static boolean isEnoughHealth(Animal sameSpecie, Animal gameObject) {
-        final int MINIMUM_HEALTH_FOR_REPRODUCE = 50;
-        return gameObject.getHealth() > MINIMUM_HEALTH_FOR_REPRODUCE && sameSpecie.getHealth() > MINIMUM_HEALTH_FOR_REPRODUCE;
     }
 
     private Optional<Animal> findPartner(Animal seeker, InteractableCell cell) {
@@ -104,20 +92,5 @@ public class ReproduceBehavior implements Subject {
         int minHealth = 50;
 
         return parent1.getHealth() >= minHealth && parent2.getHealth() >= minHealth;
-    }
-
-    @Override
-    public void addObserver(Observer observer) {
-        observers.add(observer);
-    }
-
-    @Override
-    public void removeObserver(Observer observer) {
-        observers.remove(observer);
-    }
-
-    @Override
-    public void notifyObservers() {
-        observers.forEach(Observer::updateBorn);
     }
 }

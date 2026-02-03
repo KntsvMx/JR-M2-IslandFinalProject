@@ -4,10 +4,9 @@ import org.example.behaviour.animal.AnimalBehaviour;
 import org.example.behaviour.plant.PlantBehaviour;
 import org.example.entities.map.Cell;
 import org.example.entities.map.GameField;
-import org.example.statistic.StatisticCollector;
+import org.example.statistic.AbstractSubject;
 import org.example.statistic.StatisticMonitor;
 import org.example.statistic.interfaces.Observer;
-import org.example.statistic.interfaces.Subject;
 import org.example.tasks.CellTask;
 
 import java.util.ArrayList;
@@ -16,14 +15,13 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 
-public class EntityBehaviorManager implements Subject {
+public class EntityBehaviorManager extends AbstractSubject {
     private static EntityBehaviorManager instance;
     private final AnimalBehaviour animalBehaviour;
     private final PlantBehaviour plantBehaviour;
     private List<Observer> observers = new ArrayList<>();
 
     private final StatisticMonitor statisticMonitor;
-    private final StatisticCollector statisticCollector;
     private int cycleCount = 0;
 
     private long startTime = 0;
@@ -33,7 +31,6 @@ public class EntityBehaviorManager implements Subject {
         animalBehaviour = new AnimalBehaviour();
         plantBehaviour = new PlantBehaviour();
         statisticMonitor = StatisticMonitor.getInstance();
-        statisticCollector = StatisticCollector.getInstance();
         addObserver(statisticMonitor);
     }
 
@@ -46,7 +43,6 @@ public class EntityBehaviorManager implements Subject {
 
     public void init(GameField gameField) {
         startTime = System.currentTimeMillis();
-        statisticCollector.setGameField(gameField);
         startSimulation(gameField);
     }
 
@@ -68,7 +64,6 @@ public class EntityBehaviorManager implements Subject {
                     plantBehaviour.grow(cell);
                 }
             }
-            plantBehaviour.notifyObservers();
         });
 
     }
@@ -84,7 +79,7 @@ public class EntityBehaviorManager implements Subject {
             }
         }
 
-        for(Future<?> future : futures) {
+        for (Future<?> future : futures) {
             try {
                 future.get();
             } catch (Exception e) {
@@ -93,46 +88,26 @@ public class EntityBehaviorManager implements Subject {
         }
 
         cycleCount++;
-        observers.forEach(Observer::updateCycle);
 
-        statisticCollector.notifyObservers();
         collectStatistics();
 
         if (gameField.isEcosystemDead()) {
             stopSimulation();
             endTime = System.currentTimeMillis();
             System.out.println("Game over");
-            observers.forEach(observer -> observer.updateTime(startTime, endTime));
+
         }
 
     }
 
     //    TODO: realize statistic observing and print
     private void collectStatistics() {
-        System.out.println("Сбор статистики");
-        statisticCollector.collectStatisticsFromMap();
         statisticMonitor.printStatistics();
     }
 
 
     public void stopSimulation() {
-        statisticCollector.notifyObservers();
         collectStatistics();
         ThreadPoolManager.getInstance().shutDown();
-    }
-
-    @Override
-    public void addObserver(Observer observer) {
-        observers.add(observer);
-    }
-
-    @Override
-    public void removeObserver(Observer observer) {
-        observers.remove(observer);
-    }
-
-    @Override
-    public void notifyObservers() {
-
     }
 }
