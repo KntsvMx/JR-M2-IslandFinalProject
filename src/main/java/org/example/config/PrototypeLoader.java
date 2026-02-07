@@ -17,7 +17,6 @@ import java.net.URL;
 
 public class PrototypeLoader {
     private static PrototypeLoader instance;
-    // Perhaps to make it final is good idea
     private ObjectMapper objectMapper = new YAMLMapper();
 
     private PrototypeLoader() {

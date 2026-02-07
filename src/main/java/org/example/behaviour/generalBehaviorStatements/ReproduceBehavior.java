@@ -84,7 +84,6 @@ public class ReproduceBehavior extends AbstractSubject {
                 .filter(candidate -> candidate != seeker &&
                         candidate.isAlive() &&
                         candidate.getClass().equals(seeker.getClass())
-
                 ).findAny();
     }
 

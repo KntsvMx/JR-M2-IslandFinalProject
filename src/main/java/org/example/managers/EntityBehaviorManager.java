@@ -94,8 +94,8 @@ public class EntityBehaviorManager extends AbstractSubject {
         if (gameField.isEcosystemDead()) {
             stopSimulation();
             endTime = System.currentTimeMillis();
+            collectStatistics();
             System.out.println("Game over");
-
         }
 
     }

@@ -46,29 +46,27 @@ public class StatisticMonitor implements Observer {
     public void printStatistics() {
         long currentCycle = stats.get(StatsType.CYCLE_NUMBER).sum();
 
-
-
         StringBuilder sb = new StringBuilder();
-        sb.append("____________________Current Statistics___________________\n");
-        sb.append(String.format("Time elapsed: %s%n", getTimeFormatted()));
-        sb.append(String.format("Current cycle: %d%n", stats.get(StatsType.CYCLE_NUMBER).sum()));
-        sb.append("_________________________________________________________\n");
+        //TODO: Solve cycle count problem
+        sb.append("\n====== STATISTICS [Cycle ").append(currentCycle).append("] ======\n");
+        sb.append(String.format("Time: %s%n", getTimeFormatted()));
+        sb.append("-----------------------------------\n");
 
         long plants = stats.get(StatsType.CURRENT_PLANTS).sum();
         long animals = stats.get(StatsType.CURRENT_ANIMALS).sum();
         long totalOrganisms = plants + animals;
 
-        sb.append(String.format("Alive plants: %d%n", plants));
-        sb.append(String.format("Alive animals: %d%n", animals));
         sb.append(String.format("Total organisms: %d%n", totalOrganisms));
+        sb.append("-----------------------------------\n");
+        sb.append(String.format("Plants (Alive): %d%n", plants));
+        sb.append(String.format("Animals (Alive): %d%n", animals));
 
-        sb.append(String.format("/n--- Event History ---/n"));
+        sb.append("---------- Event History ----------\n");
         sb.append(String.format("Animals born: %d%n", stats.get(StatsType.BORN_ANIMALS).sum()));
-        sb.append(String.format("Animals died: %d%n", stats.get(StatsType.DIED_ANIMALS).sum()));
+        sb.append(String.format("Died (Hunger): %d%n", stats.get(StatsType.DIED_ANIMALS).sum()));
         sb.append(String.format("Animals eaten: %d%n", stats.get(StatsType.KILLED_ANIMALS).sum()));
         sb.append(String.format("Plants eaten: %d%n", stats.get(StatsType.EATEN_PLANT).sum()));
-
-        sb.append("_________________________________________________________\n");
+        sb.append("-----------------------------------\n");
         System.out.print(sb);
     }
 
