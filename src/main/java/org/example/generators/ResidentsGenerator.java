@@ -48,7 +48,7 @@ public class ResidentsGenerator {
             count = randomAmount.nextInt(maxCount + 1);
 
             for (int i = 0; i < count; i++) {
-                organisms.add(prototypes.get(prototype).copy());
+                organisms.add(prototypes.get(prototype).reproduce());
             }
 
             initializeCells(organisms, cell);
