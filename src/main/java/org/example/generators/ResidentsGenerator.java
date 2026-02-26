@@ -6,6 +6,8 @@ import org.example.entities.limits.Limits;
 import org.example.entities.map.Cell;
 import org.example.entities.plants.Plant;
 import org.example.factory.OrganismFactory;
+import org.example.statistic.AbstractSubject;
+import org.example.statistic.interfaces.StatsType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -13,7 +15,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class ResidentsGenerator {
+public class ResidentsGenerator extends AbstractSubject {
     private final OrganismFactory organismFactory;
 
     public ResidentsGenerator() {
@@ -43,9 +45,15 @@ public class ResidentsGenerator {
 
             maxCount = getMaxCount(gameObjectPrototypeInstance, maxCount);
             count = randomAmount.nextInt(maxCount + 1);
-
+            
             for (int i = 0; i < count; i++) {
                 organisms.add(gameObjectPrototypeInstance.reproduce());
+                
+                if (gameObjectPrototypeInstance instanceof Animal) {
+                    notifyObservers(StatsType.CURRENT_ANIMALS, 1); 
+                } else if (gameObjectPrototypeInstance instanceof Plant) {
+                    notifyObservers(StatsType.CURRENT_PLANTS, 1); 
+                }
             }
 
             initializeCells(organisms, cell);

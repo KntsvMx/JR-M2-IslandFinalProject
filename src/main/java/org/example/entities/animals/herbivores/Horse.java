@@ -30,9 +30,9 @@ public class Horse extends Herbivore {
                 .target(getTarget())
                 .icon(getIcon())
                 .isAlive(true)
-                .weight(50)
+                .weight(200)
                 .health(100)
-                .age(1)
+                .age(2)
                 .build();
     }
 
