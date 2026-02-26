@@ -32,24 +32,10 @@ public abstract class Plant implements Organism, Eatable, Cloneable{
     private final int MINIMAL_HEALTH = 5;
 
     @Override
-    public void play() {
-
-    }
-
-    @Override
     public void beEaten() {
         this.setAlive(false);
         this.setHealth(0);
 //        TODO: implement method which will delete GameObject from cell (performance improvement)
-    }
-
-    @Override
-    public GameObject copy() {
-        try {
-            return (Plant) this.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError("Cloning not supported", e);
-        }
     }
 
     public void decreaseHealthOverTime() {

@@ -11,17 +11,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Builder
 @Getter
 public class Cell implements InteractableCell {
-    private static long serialUID = 1L;
+    private static AtomicLong serialUID = new AtomicLong(1);
     @Getter
     private final ReentrantLock lock = new ReentrantLock();
 
     @Builder.Default
-    private final long UID = serialUID++;
+    private final long UID = serialUID.getAndIncrement();
 
     @Setter
     private HashMap<Class<? extends GameObject>, List<GameObject>> residents;

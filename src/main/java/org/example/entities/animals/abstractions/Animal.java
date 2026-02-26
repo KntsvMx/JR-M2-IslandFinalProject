@@ -57,10 +57,6 @@ public abstract class Animal implements Organism, Movable, Eatable, Cloneable {
     private AtomicInteger consecutiveActions = new AtomicInteger(0);
     public static final int MAX_CONSECUTIVE_ACTIONS = 3;
 
-    @Override
-    public void play() {
-
-    }
 
 
     @Override
@@ -87,14 +83,6 @@ public abstract class Animal implements Organism, Movable, Eatable, Cloneable {
         }
     }
 
-    @Override
-    public GameObject copy() {
-        try {
-            return (Animal) this.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError("Cloning not supported", e);
-        }
-    }
 
     @Override
     public void checkDeath() {

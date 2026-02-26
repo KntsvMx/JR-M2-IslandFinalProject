@@ -16,11 +16,18 @@ import org.example.abstraction.interfaces.GameObject;
 @ToString(callSuper = true)
 public class Grass extends Plant {
 
-
     @Override
     public GameObject reproduce() {
 //        TODO: fill builder pattern to work state
-        return Grass.builder().build();
+        return Grass.builder()
+                .cell(getCell())
+                .maxAmount(getMaxAmount())
+                .icon(getIcon())
+                .isAlive(true)
+                .weight(1)
+                .health(100)
+                .age(1)
+                .build();
     }
 
 }

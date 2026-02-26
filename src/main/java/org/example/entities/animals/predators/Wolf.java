@@ -22,11 +22,14 @@ public class Wolf extends Predator {
     @Override
     public GameObject reproduce() {
         return Wolf.builder()
+                .cell(getCell())
                 .limits(getLimits())
                 .target(getTarget())
+                .icon(getIcon())
+                .isAlive(true)
+                .weight(50)
                 .health(100)
                 .age(1)
-                .isAlive(true)
                 .build();
     }
 
