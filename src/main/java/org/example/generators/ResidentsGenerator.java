@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ResidentsGenerator {
@@ -21,20 +20,18 @@ public class ResidentsGenerator {
         organismFactory = OrganismFactory.getInstance();
     }
 
-    public Map<Class<? extends GameObject>, List<GameObject>> generateNewResidence(Cell[][] cells) {
-        Map<Class<? extends GameObject>, List<GameObject>> residents = new HashMap<>();
-        Map<Class<? extends GameObject>, GameObject> prototypes = organismFactory.getPrototypes();
-
+    public void generateNewResidence(Cell[][] cells) {
         for (Cell[] cell : cells) {
             for (Cell value : cell) {
-                fillCells(prototypes, residents, value);
+                fillCells(value);
             }
         }
-
-        return residents;
     }
 
-    private void fillCells(Map<Class<? extends GameObject>, GameObject> prototypes, Map<Class<? extends GameObject>, List<GameObject>> residents, Cell cell) {
+    private void fillCells(Cell cell) {
+        HashMap<Class<? extends GameObject>, List<GameObject>> residents = new HashMap<>();
+        Map<Class<? extends GameObject>, GameObject> prototypes = organismFactory.getPrototypes();
+
         Random randomAmount = new Random();
 
         int maxCount = 0;
@@ -48,12 +45,12 @@ public class ResidentsGenerator {
             count = randomAmount.nextInt(maxCount + 1);
 
             for (int i = 0; i < count; i++) {
-                organisms.add(prototypes.get(prototype).reproduce());
+                organisms.add(gameObjectPrototypeInstance.reproduce());
             }
 
             initializeCells(organisms, cell);
             residents.put(prototype, organisms);
-            cell.setResidents((HashMap<Class<? extends GameObject>, List<GameObject>>) residents);
+            cell.setResidents(residents);
         }
     }
 
