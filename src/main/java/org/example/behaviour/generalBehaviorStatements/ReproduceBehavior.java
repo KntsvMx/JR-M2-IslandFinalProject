@@ -35,7 +35,7 @@ public class ReproduceBehavior extends AbstractSubject {
     }
 
     private void reproduceAnimal(Animal animal, InteractableCell currentCell) {
-        if (!SpaceUtil.availableSpaceForSpecie(currentCell, animal.getLimits().getMaxAmount())) {
+        if (!SpaceUtil.availableSpaceForSpecie(currentCell, animal)) {
             return;
         }
 
@@ -60,14 +60,12 @@ public class ReproduceBehavior extends AbstractSubject {
     }
 
     private void reproducePlant(Plant plantGameObject, InteractableCell currentCell) {
-        if (SpaceUtil.availableSpaceForSpecie(currentCell, plantGameObject.getMaxAmount())) {
+        if (SpaceUtil.availableSpaceForSpecie(currentCell, plantGameObject)) {
             GameObject newPlant = organismFactory.create(plantGameObject.getClass());
             cellManager.addGameObject(currentCell, newPlant);
 
             notifyObservers(StatsType.BORN_PLANT, 1);
             notifyObservers(StatsType.CURRENT_PLANTS, 1);
-        } else {
-            throw new IllegalArgumentException("Plants not available");
         }
     }
 
