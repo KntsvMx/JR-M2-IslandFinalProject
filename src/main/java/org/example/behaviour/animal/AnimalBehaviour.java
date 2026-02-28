@@ -36,7 +36,9 @@ public class AnimalBehaviour {
         animal.reduceWeightPerTick();
         if (animal.getWeight() <= 0) {
             System.out.println(animal.getClass().getSimpleName() + " has died due to weight loss.");
+//          TODO: Refactor this to a more elegant solution, and implement observer pattern to update statistics
             animal.checkDeath();
+
         }
     }
 }

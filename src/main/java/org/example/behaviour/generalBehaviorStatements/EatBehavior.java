@@ -69,7 +69,9 @@ public class EatBehavior extends AbstractSubject {
         int currentHealth = predator.getHealth();
 
         int newHealth = Math.min(100, currentHealth + (int) (foodWeight * 10));
+        double newWeight = Math.min(predator.getLimits().getMaxWeight(), predator.getWeight() + foodWeight * 0.5);
         predator.setHealth(newHealth);
+        predator.setWeight(newWeight);
 
         if (victim instanceof Animal) {
             ((Animal) victim).beEaten();
