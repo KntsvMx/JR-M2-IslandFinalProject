@@ -14,10 +14,11 @@ public class AnimalBehaviour {
     private final EatBehavior eatBehavior;
     private final ReproduceBehavior reproduceBehavior;
 
-    public AnimalBehaviour() {
-        this.moveBehavior = new MoveBehavior();
-        this.eatBehavior = new EatBehavior();
-        this.reproduceBehavior = new ReproduceBehavior();
+    public AnimalBehaviour(MoveBehavior moveBehavior, EatBehavior eatBehavior, ReproduceBehavior reproduceBehavior) {
+//        TODO: Refactor this to use dependency injection, and make it more flexible to add new behaviors in the future
+        this.moveBehavior = moveBehavior;
+        this.eatBehavior = eatBehavior;
+        this.reproduceBehavior = reproduceBehavior;
     }
 
     public void act(Animal animal) {

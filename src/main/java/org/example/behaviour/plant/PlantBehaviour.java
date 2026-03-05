@@ -14,8 +14,8 @@ public class PlantBehaviour extends AbstractSubject {
     List<Observer> observers = new ArrayList<>();
     private final ReproduceBehavior reproduceBehavior;
 
-    public PlantBehaviour() {
-        this.reproduceBehavior = new ReproduceBehavior();
+    public PlantBehaviour(ReproduceBehavior reproduceBehavior) {
+        this.reproduceBehavior = reproduceBehavior;
     }
 
 

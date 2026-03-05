@@ -1,6 +1,9 @@
 package org.example.managers;
 
 import org.example.behaviour.animal.AnimalBehaviour;
+import org.example.behaviour.generalBehaviorStatements.EatBehavior;
+import org.example.behaviour.generalBehaviorStatements.MoveBehavior;
+import org.example.behaviour.generalBehaviorStatements.ReproduceBehavior;
 import org.example.behaviour.plant.PlantBehaviour;
 import org.example.entities.map.Cell;
 import org.example.entities.map.GameField;
@@ -19,6 +22,9 @@ public class EntityBehaviorManager extends AbstractSubject {
     private static EntityBehaviorManager instance;
     private final AnimalBehaviour animalBehaviour;
     private final PlantBehaviour plantBehaviour;
+    private final MoveBehavior moveBehavior;
+    private final EatBehavior eatBehavior;
+    private final ReproduceBehavior reproduceBehavior;
     private List<Observer> observers = new ArrayList<>();
 
     private final StatisticMonitor statisticMonitor;
@@ -28,8 +34,11 @@ public class EntityBehaviorManager extends AbstractSubject {
     private long endTime = 0;
 
     private EntityBehaviorManager() {
-        animalBehaviour = new AnimalBehaviour();
-        plantBehaviour = new PlantBehaviour();
+        moveBehavior = new MoveBehavior();
+        eatBehavior = new EatBehavior();
+        reproduceBehavior = new ReproduceBehavior();
+        animalBehaviour = new AnimalBehaviour(moveBehavior, eatBehavior, reproduceBehavior);
+        plantBehaviour = new PlantBehaviour(reproduceBehavior);
         statisticMonitor = StatisticMonitor.getInstance();
         addObserver(statisticMonitor);
     }
