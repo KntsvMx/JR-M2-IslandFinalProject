@@ -3,14 +3,12 @@ package org.example.entities.animals.abstractions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.example.abstraction.interfaces.GameObject;
 import org.example.entities.interfaces.Eatable;
 import org.example.entities.interfaces.Movable;
 import org.example.entities.interfaces.Organism;
 import org.example.entities.limits.Limits;
 import org.example.entities.map.InteractableCell;
 import org.example.entities.target.Target;
-import org.example.statistic.StatisticMonitor;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -24,7 +22,7 @@ import java.util.concurrent.locks.ReentrantLock;
 @EqualsAndHashCode
 @ToString
 
-public abstract class Animal implements Organism, Movable, Eatable, Cloneable {
+public abstract class Animal implements Organism, Movable, Eatable {
 
     private static AtomicLong serialUID = new AtomicLong(1);
     private final ReentrantLock lock = new ReentrantLock();
@@ -84,29 +82,12 @@ public abstract class Animal implements Organism, Movable, Eatable, Cloneable {
     }
 
 
-    @Override
-    public void checkDeath() {
-        if (shouldDie() && isAlive) {
-            die();
-            // TODO: 2025-06-19(added) need to implement observer notification about this event
-        }
+    public boolean isStarving() {
+        return this.getWeight() <= this.limits.getMinWeight();
     }
 
-    private void die() {
-        this.setAlive(false);
-        this.getCell().removeGameObjectFromResidents(this);
-    }
-
-    private boolean shouldDie() {
-        return isEnoughHealthAndWeight() || isEnoughWeightToSurvive();
-    }
-    //TODO: 2025-08-07 (added) refactor this method to be more readable
-    private boolean isEnoughWeightToSurvive() {
-        return this.getWeight() >= this.limits.getMinWeight() && this.getCell() != null;
-    }
-    //TODO: 2025-08-07 (added) refactor this method to be more readable
-    private boolean isEnoughHealthAndWeight() {
-        return this.getHealth() == 0 && this.getWeight() <= this.limits.getMinWeight();
+    public boolean isFatallyInjured() {
+        return this.getHealth() <= 0 || this.getHealth() <= this.getLimits().getMinHealth();
     }
 
     public void changeHealthAfterMove() {
@@ -115,17 +96,14 @@ public abstract class Animal implements Organism, Movable, Eatable, Cloneable {
 
     public void changeHealthAfterHunt() {
         this.setHealth(this.getHealth() - HEALTH_AFTER_HUNT);
-        checkDeath();
     }
 
     public void decreaseHealthAfterReproduction() {
         this.setHealth(this.getHealth() - HEALTH_AFTER_REPRODUCE);
-        checkDeath();
     }
 
     private void decreaseHealthIfNotEnoughWeight() {
         this.setHealth(this.getHealth() - HEALTH_IF_NOT_ENOUGH_WEIGHT);
-        checkDeath();
     }
 
     public void recoverHealth() {

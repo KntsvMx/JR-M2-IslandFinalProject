@@ -7,9 +7,11 @@ import org.example.behaviour.generalBehaviorStatements.ReproduceBehavior;
 import org.example.entities.animals.abstractions.Animal;
 import org.example.entities.map.Cell;
 import org.example.entities.map.InteractableCell;
+import org.example.statistic.AbstractSubject;
+import org.example.statistic.interfaces.StatsType;
 
 
-public class AnimalBehaviour {
+public class AnimalBehaviour extends AbstractSubject {
     private final MoveBehavior moveBehavior;
     private final EatBehavior eatBehavior;
     private final ReproduceBehavior reproduceBehavior;
@@ -25,21 +27,34 @@ public class AnimalBehaviour {
         if (!animal.isAlive()) {
             return;
         }
+        animal.reduceWeightPerTick();
 
         InteractableCell currentCell = animal.getCell();
+
+
         eatBehavior.eat(animal, currentCell);
+        if (checkAndProcessDeath(animal, currentCell)) {
+            return;
+        }
         reproduceBehavior.reproduce(animal, currentCell);
 
         Cell targetCell = (Cell) currentCell.getRandomCellFromClosest();
         if (targetCell != null && targetCell != currentCell) {
             moveBehavior.move(animal, (Cell) currentCell, targetCell);
         }
-        animal.reduceWeightPerTick();
-        if (animal.getWeight() <= 0) {
-            System.out.println(animal.getClass().getSimpleName() + " has died due to weight loss.");
-//          TODO: Refactor this to a more elegant solution, and implement observer pattern to update statistics
-            animal.checkDeath();
+    }
 
+
+    private boolean checkAndProcessDeath(Animal animal, InteractableCell cell) {
+        if (animal.isStarving() || animal.isFatallyInjured()) {
+            animal.setAlive(false);
+            cell.removeGameObjectFromResidents(animal);
+
+            notifyObservers(StatsType.DIED_ANIMALS, 1);
+            notifyObservers(StatsType.CURRENT_ANIMALS, -1);
+
+            return true;
         }
+        return false;
     }
 }
