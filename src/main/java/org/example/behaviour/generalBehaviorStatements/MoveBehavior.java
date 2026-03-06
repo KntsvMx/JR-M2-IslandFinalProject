@@ -9,10 +9,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class MoveBehavior {
-    private final CellManager cellManager;
 
     public MoveBehavior() {
-        cellManager = CellManager.getInstance();
+
     }
 
     public void move(Animal animal, Cell fromCell, Cell toCell) {

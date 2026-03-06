@@ -16,7 +16,6 @@ import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class EatBehavior extends AbstractSubject {
-    private final List<Observer> observers = new ArrayList<>();
     private final CellManager cellManager;
 
     public EatBehavior() {
@@ -83,7 +82,6 @@ public class EatBehavior extends AbstractSubject {
             notifyObservers(StatsType.CURRENT_PLANTS, -1);
         }
         cell.removeGameObjectFromResidents(victim);
-
     }
 
 

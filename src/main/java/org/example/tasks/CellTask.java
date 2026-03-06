@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 
-public class CellTask implements Runnable{
+public class CellTask implements Runnable {
     private final Cell cell;
     private final AnimalBehaviour animalBehaviour;
     private final PlantBehaviour plantBehaviour;
@@ -32,7 +32,7 @@ public class CellTask implements Runnable{
             try {
                 processAnimals();
 
-                if(cycleCount % 4 == 0) {
+                if (cycleCount % 4 == 0) {
                     processPlants();
                 }
             } finally {
@@ -50,7 +50,7 @@ public class CellTask implements Runnable{
 
     private void processAnimals() {
         List<Animal> animals = getAllAnimals(cell);
-        for(Animal animal : animals) {
+        for (Animal animal : animals) {
             if (!animal.isAlive()) {
                 continue;
             }
@@ -63,7 +63,7 @@ public class CellTask implements Runnable{
         for (Map.Entry<Class<? extends GameObject>, List<GameObject>> entry : cell.getResidents().entrySet()) {
             if (Animal.class.isAssignableFrom(entry.getKey())) {
                 for (GameObject obj : entry.getValue()) {
-                    if(obj instanceof Animal) {
+                    if (obj instanceof Animal) {
                         allAnimals.add((Animal) obj);
                     }
                 }

@@ -26,6 +26,7 @@ public class PlantBehaviour extends AbstractSubject {
     }
 
     private void processPlants(Cell cell, Consumer<Plant> action) {
+//      TODO: Refactor this to be more efficient, and to avoid potential ConcurrentModificationException + implement exception handling
         cell.getResidents().forEach((key, value) -> {
             if (Plant.class.isAssignableFrom(key)) {
                 value.stream()
