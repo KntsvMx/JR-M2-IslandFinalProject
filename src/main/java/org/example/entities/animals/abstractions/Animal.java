@@ -116,7 +116,7 @@ public abstract class Animal implements Organism, Movable, Eatable {
     }
 
     public void reduceWeightPerTick() {
-        double loss = this.getLimits().getMaxWeight() * 0.5;
+        double loss = this.getLimits().getMaxWeight() * 0.05;
         this.setWeight(this.getWeight() - loss);
     }
 
