@@ -2,6 +2,7 @@ package org.example.behaviour.generalBehaviorStatements;
 
 import org.example.entities.animals.abstractions.Animal;
 import org.example.entities.map.Cell;
+import org.example.entities.map.InteractableCell;
 import org.example.managers.CellManager;
 import org.example.utils.SpaceUtil;
 
@@ -14,7 +15,7 @@ public class MoveBehavior {
 
     }
 
-    public void move(Animal animal, Cell fromCell, Cell toCell) {
+    public void move(Animal animal, InteractableCell fromCell, InteractableCell toCell) {
         ReentrantLock targetLock = toCell.getLock();
         boolean gotLock = false;
 
