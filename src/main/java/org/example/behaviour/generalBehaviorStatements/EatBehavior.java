@@ -16,11 +16,6 @@ import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class EatBehavior extends AbstractSubject {
-    private final CellManager cellManager;
-
-    public EatBehavior() {
-        cellManager = CellManager.getInstance();
-    }
 
     public void eat(Animal animal, InteractableCell cell) {
         if (!isHungry(animal)) {
@@ -64,14 +59,19 @@ public class EatBehavior extends AbstractSubject {
     }
 
     private void performEat(Animal predator, GameObject victim, InteractableCell cell) {
-        double foodWeight = victim instanceof Animal ? ((Animal) victim).getWeight() : ((Plant) victim).getWeight();
+        double foodWeight = getFoodWeight(victim);
         int currentHealth = predator.getHealth();
-
         int newHealth = Math.min(100, currentHealth + (int) (foodWeight * 10));
         double newWeight = Math.min(predator.getLimits().getMaxWeight(), predator.getWeight() + foodWeight * 0.5);
+
         predator.setHealth(newHealth);
         predator.setWeight(newWeight);
 
+        notifyObserver(victim);
+        cell.removeGameObjectFromResidents(victim);
+    }
+
+    private void notifyObserver(GameObject victim) {
         if (victim instanceof Animal) {
             ((Animal) victim).beEaten();
             notifyObservers(StatsType.KILLED_ANIMALS, 1);
@@ -81,9 +81,11 @@ public class EatBehavior extends AbstractSubject {
             notifyObservers(StatsType.EATEN_PLANT, 1);
             notifyObservers(StatsType.CURRENT_PLANTS, -1);
         }
-        cell.removeGameObjectFromResidents(victim);
     }
 
+    private static double getFoodWeight(GameObject victim) {
+        return victim instanceof Animal ? ((Animal) victim).getWeight() : ((Plant) victim).getWeight();
+    }
 
     private boolean isAlive(GameObject obj) {
         if (obj instanceof Animal) {
