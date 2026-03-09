@@ -10,7 +10,7 @@ import org.reflections.Reflections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-// This class created to scanning future entities across the project and help to identify what should be generated for the future, and return set of classes
+// TODO: think about GameObjectScanner whether it should use Singleton pattern or not, in case of resources usage and performance.
 
 public class GameObjectScanner {
     private static GameObjectScanner instance;

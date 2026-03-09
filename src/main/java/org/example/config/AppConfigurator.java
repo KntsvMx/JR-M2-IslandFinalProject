@@ -1,9 +1,9 @@
 package org.example.config;
 
 import org.example.entities.map.GameField;
+import org.example.managers.CellManager;
 import org.example.managers.EntityBehaviorManager;
 import org.example.managers.EntityLoadManager;
-import org.example.managers.CellManager;
 
 
 public class AppConfigurator {
