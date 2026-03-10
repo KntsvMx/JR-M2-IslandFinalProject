@@ -15,8 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.example.entities.animals.constants.AnimalConstants.*;
+
 public class ReproduceBehavior extends AbstractSubject {
-    private List<Observer> observers = new ArrayList<>();
     private final CellManager cellManager;
     private final OrganismFactory organismFactory;
 
@@ -49,8 +50,8 @@ public class ReproduceBehavior extends AbstractSubject {
 
                 currentCell.addGameObjectToResidents(baby.getClass(), baby);
 
-                animal.decreaseHealthAfterReproduction();
-                partner.decreaseHealthAfterReproduction();
+                animal.decreaseHealth(HEALTH_AFTER_REPRODUCE);
+                partner.decreaseHealth(HEALTH_AFTER_REPRODUCE);
 
                 notifyObservers(StatsType.BORN_ANIMALS, 1);
                 notifyObservers(StatsType.CURRENT_ANIMALS, 1);

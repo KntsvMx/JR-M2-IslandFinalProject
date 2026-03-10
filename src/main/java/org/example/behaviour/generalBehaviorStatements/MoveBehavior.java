@@ -7,6 +7,8 @@ import org.example.utils.SpaceUtil;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
+import static org.example.entities.animals.constants.AnimalConstants.HEALTH_AFTER_MOVE;
+
 //TODO: fix bug with move when target cell isn't locked which can cause of ConcurrentModificationException
 
 public class MoveBehavior {
@@ -43,7 +45,7 @@ public class MoveBehavior {
 //                  TODO: optimize this by change method animal.setCell() to CellManager
             animal.setCell(toCell);
 
-            animal.changeHealthAfterMove();
+            animal.decreaseHealth(HEALTH_AFTER_MOVE);
         }
     }
 }

@@ -56,8 +56,7 @@ public class Cell implements InteractableCell {
         object.setCell(this);
     }
 
-    ;
-
+//    TODO: move this method to CellManager class
     public boolean hasAliveAnimals() {
         for (List<GameObject> list : residents.values()) {
             for (GameObject obj : list) {
