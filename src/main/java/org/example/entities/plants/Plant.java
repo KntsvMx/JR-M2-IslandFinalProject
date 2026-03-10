@@ -3,11 +3,11 @@ package org.example.entities.plants;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.example.abstraction.interfaces.GameObject;
 import org.example.entities.interfaces.Eatable;
 import org.example.entities.interfaces.Organism;
-import org.example.entities.map.Cell;
 import org.example.entities.map.InteractableCell;
+
+import static org.example.entities.plants.constants.PlantConstants.DECREASE_HEALTH_OVER_TIME;
 
 @NoArgsConstructor
 @SuperBuilder
@@ -15,7 +15,7 @@ import org.example.entities.map.InteractableCell;
 @Setter
 @EqualsAndHashCode
 @ToString
-public abstract class Plant implements Organism, Eatable, Cloneable{
+public abstract class Plant implements Organism, Eatable {
 
     @Setter
     @JsonIgnore
@@ -29,7 +29,6 @@ public abstract class Plant implements Organism, Eatable, Cloneable{
     private int health;
     private int age;
 
-    private final int MINIMAL_HEALTH = 5;
 
     @Override
     public void beEaten() {
@@ -38,13 +37,15 @@ public abstract class Plant implements Organism, Eatable, Cloneable{
 //        TODO: implement method which will delete GameObject from cell (performance improvement)
     }
 
+//    TODO: implement this method into logic of simulation
     public void decreaseHealthOverTime() {
-        this.setHealth(this.getHealth() - 20);
+        this.setHealth(this.getHealth() - DECREASE_HEALTH_OVER_TIME);
     }
 
-    public void checkDeath() {
-        if (this.getHealth() <= MINIMAL_HEALTH) {
-            this.setAlive(false);
-        }
-    }
+//    TODO: move this method to DeathService and make it universal for all organisms.
+//    public void checkDeath() {
+//        if (this.getHealth() <= MINIMAL_HEALTH) {
+//            this.setAlive(false);
+//        }
+//    }
 }
