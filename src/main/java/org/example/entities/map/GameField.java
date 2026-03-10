@@ -6,17 +6,15 @@ import lombok.Setter;
 import org.example.abstraction.annotations.Config;
 
 
-@Config(fileName = "model/yamlFormat/Map/gameField.yaml")
+@Setter
 @Getter
+@Config(fileName = "model/yamlFormat/Map/gameField.yaml")
 @NoArgsConstructor
 public class GameField {
 
-    private int width;
-    private int height;
-
-    @Setter
     private volatile Cell[][] cells;
 
+//    TODO: use Statistic logic to determine if ecosystem is dead (O(1) instead of O(N^3))
     public boolean isEcosystemDead() {
         for(Cell[] row : cells){
             for(Cell cell : row) {
