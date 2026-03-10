@@ -14,6 +14,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantLock;
 
+import static org.example.entities.animals.constants.AnimalConstants.*;
+
 
 @NoArgsConstructor
 @SuperBuilder
@@ -21,6 +23,8 @@ import java.util.concurrent.locks.ReentrantLock;
 @Getter
 @EqualsAndHashCode
 @ToString
+
+// TODO: create DeathService to handle death of animals and plants instead of call other methods.
 
 public abstract class Animal implements Organism, Movable, Eatable {
 
@@ -43,18 +47,8 @@ public abstract class Animal implements Organism, Movable, Eatable {
     private int health;
     private int age;
 
-
-    private final int HEALTH_AFTER_MOVE = 8;
-    private final int HEALTH_AFTER_HUNT = 5;
-    private final int HEALTH_AFTER_REPRODUCE = 25;
-    private final int HEALTH_AFTER_EXCHANGE = 15;
-    private final int HEALTH_IF_NOT_ENOUGH_WEIGHT = 15;
-
-    private final int WEIGHT_TO_HEALTH_EXCHANGE = 10;
-
     private AtomicInteger consecutiveActions = new AtomicInteger(0);
     public static final int MAX_CONSECUTIVE_ACTIONS = 3;
-
 
 
     @Override
@@ -69,19 +63,6 @@ public abstract class Animal implements Organism, Movable, Eatable {
         }
     }
 
-
-    public void exchangeWeightToHealth() {
-        double weightAfterExchange = this.getWeight() - WEIGHT_TO_HEALTH_EXCHANGE;
-        int healthAfterExchange = this.getHealth() + HEALTH_AFTER_EXCHANGE;
-        if (this.weight < limits.getMaxWeight()) {
-            setHealth(healthAfterExchange);
-            setWeight(weightAfterExchange);
-        } else if (this.weight <= limits.getMinWeight()) {
-            decreaseHealthIfNotEnoughWeight();
-        }
-    }
-
-
     public boolean isStarving() {
         return this.getWeight() <= this.limits.getMinWeight();
     }
@@ -90,28 +71,15 @@ public abstract class Animal implements Organism, Movable, Eatable {
         return this.getHealth() <= 0 || this.getHealth() <= this.getLimits().getMinHealth();
     }
 
-    public void changeHealthAfterMove() {
-        this.setHealth(this.getHealth() - HEALTH_AFTER_MOVE);
-    }
-
-    public void changeHealthAfterHunt() {
-        this.setHealth(this.getHealth() - HEALTH_AFTER_HUNT);
-    }
-
-    public void decreaseHealthAfterReproduction() {
-        this.setHealth(this.getHealth() - HEALTH_AFTER_REPRODUCE);
-    }
-
-    private void decreaseHealthIfNotEnoughWeight() {
-        this.setHealth(this.getHealth() - HEALTH_IF_NOT_ENOUGH_WEIGHT);
+    public boolean decreaseHealth(int healthLoss) {
+        this.setHealth(Math.max(NO_HEALTH, this.getHealth() - healthLoss));
+        return this.isFatallyInjured();
     }
 
     public void recoverHealth() {
-        if (this.getHealth() < 100 && this.getWeight() > this.getLimits().getMinWeight()) {
-            int recoveryAmount = 3;
-            int weightCost = 1;
-            this.setHealth(Math.min(100, this.getHealth() + recoveryAmount));
-            this.setWeight(this.getWeight() - weightCost);
+        if (this.getHealth() < MAX_WEIGHT && this.getWeight() > this.getLimits().getMinWeight()) {
+            this.setHealth(Math.min(100, this.getHealth() + RECOVERY_AMOUNT));
+            this.setWeight(this.getWeight() - WEIGHT_COST);
         }
     }
 
