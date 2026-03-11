@@ -29,7 +29,7 @@ public class Cell implements InteractableCell {
 
     private final List<Cell> nextCells = new CopyOnWriteArrayList<>();
 
-    public void setNext(Cell cell) {
+    public void addNeighbor(Cell cell) {
         nextCells.add(cell);
     }
 

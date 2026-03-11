@@ -9,7 +9,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public interface InteractableCell {
     Map<Class<? extends GameObject>, List<GameObject>> getResidents();
 
-    void setNext(Cell cell);
+    void addNeighbor(Cell cell);
 
     Cell getNext(Integer next);
 
