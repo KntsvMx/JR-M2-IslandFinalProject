@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.abstraction.annotations.Config;
+import org.example.managers.CellManager;
 
 
 @Setter
@@ -21,7 +22,7 @@ public class GameField {
     public boolean isEcosystemDead() {
         for(Cell[] row : cells){
             for(Cell cell : row) {
-                if(cell.hasAliveAnimals()) {
+                if(CellManager.getInstance().hasAliveAnimals(cell)) {
                     return false;
                 }
             }

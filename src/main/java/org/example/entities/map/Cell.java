@@ -44,29 +44,18 @@ public class Cell implements InteractableCell {
         return nextCells.get(randomIndex);
     }
 
-//    TODO: make this method only available for calling for CellManager class
     public void removeGameObjectFromResidents(GameObject object) {
         List<GameObject> speciesList = residents.get(object.getClass());
         if (speciesList != null) {
             speciesList.remove(object);
         }
     }
-//    TODO: make this method only available for calling for CellManager class
+
     public void addGameObjectToResidents(Class<? extends GameObject> gameObjectClass, GameObject object) {
         residents.computeIfAbsent(gameObjectClass, k -> new ArrayList<>()).add(object);
         object.setCell(this);
     }
 
-    //    TODO: move this method to CellManager class
-    public boolean hasAliveAnimals() {
-        for (List<GameObject> list : residents.values()) {
-            for (GameObject obj : list) {
-                if (obj instanceof Animal && ((Animal) obj).isAlive()) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+
 }
 
