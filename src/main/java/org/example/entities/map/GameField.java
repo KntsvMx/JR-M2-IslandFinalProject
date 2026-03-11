@@ -12,6 +12,9 @@ import org.example.abstraction.annotations.Config;
 @NoArgsConstructor
 public class GameField {
 
+    private int width;
+    private int height;
+
     private volatile Cell[][] cells;
 
 //    TODO: use Statistic logic to determine if ecosystem is dead (O(1) instead of O(N^3))
