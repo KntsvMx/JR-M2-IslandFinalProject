@@ -6,16 +6,15 @@ import org.example.entities.map.InteractableCell;
 import org.example.entities.plants.Plant;
 import org.example.managers.CellManager;
 import org.example.statistic.AbstractSubject;
-import org.example.statistic.interfaces.Observer;
 import org.example.statistic.interfaces.StatsType;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class EatBehavior extends AbstractSubject {
+    private final CellManager cellManager = CellManager.getInstance();
 
     public void eat(Animal animal, InteractableCell cell) {
         if (!isHungry(animal)) {
@@ -68,7 +67,7 @@ public class EatBehavior extends AbstractSubject {
         predator.setWeight(newWeight);
 
         notifyObserver(victim);
-        cell.removeGameObjectFromResidents(victim);
+        cellManager.removeGameObject(cell, victim);
     }
 
     private void notifyObserver(GameObject victim) {

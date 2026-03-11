@@ -6,6 +6,7 @@ import org.example.behaviour.generalBehaviorStatements.MoveBehavior;
 import org.example.behaviour.generalBehaviorStatements.ReproduceBehavior;
 import org.example.entities.animals.abstractions.Animal;
 import org.example.entities.map.InteractableCell;
+import org.example.managers.CellManager;
 import org.example.statistic.AbstractSubject;
 import org.example.statistic.interfaces.StatsType;
 
@@ -14,6 +15,7 @@ public class AnimalBehaviour extends AbstractSubject {
     private final MoveBehavior moveBehavior;
     private final EatBehavior eatBehavior;
     private final ReproduceBehavior reproduceBehavior;
+    private final CellManager cellManager = CellManager.getInstance();
 
     public AnimalBehaviour(MoveBehavior moveBehavior, EatBehavior eatBehavior, ReproduceBehavior reproduceBehavior) {
         this.moveBehavior = moveBehavior;
@@ -25,10 +27,8 @@ public class AnimalBehaviour extends AbstractSubject {
         if (!animal.isAlive()) {
             return;
         }
-//        TODO: optimize by changing animal.getCell() to CellManager call.
-        InteractableCell currentCell = animal.getCell();
-//        TODO: optimize by changing currentCell to CellManager call.
-        InteractableCell targetCell = currentCell.getRandomCellFromClosest();
+        InteractableCell currentCell = cellManager.getAnimalCell(animal);
+        InteractableCell targetCell = cellManager.getRandomCellFromClosest(currentCell);
 
         animal.reduceWeightPerTick();
 
@@ -49,8 +49,7 @@ public class AnimalBehaviour extends AbstractSubject {
     private boolean checkAndProcessDeath(Animal animal, InteractableCell cell) {
         if (animal.isStarving() || animal.isFatallyInjured()) {
             animal.setAlive(false);
-//            TODO: optimize by changing cell.removeGameObjectFromResidents to CellManager call.
-            cell.removeGameObjectFromResidents(animal);
+            cellManager.removeGameObject(cell, animal);
 
             statisticCollectionDueAnimalsDeath();
 

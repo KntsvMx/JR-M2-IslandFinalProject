@@ -48,7 +48,7 @@ public class ReproduceBehavior extends AbstractSubject {
             if (canReproduce(animal, partner)) {
                 GameObject baby = animal.reproduce();
 
-                currentCell.addGameObjectToResidents(baby.getClass(), baby);
+                cellManager.addGameObject(currentCell, baby);
 
                 animal.decreaseHealth(HEALTH_AFTER_REPRODUCE);
                 partner.decreaseHealth(HEALTH_AFTER_REPRODUCE);

@@ -2,6 +2,7 @@ package org.example.behaviour.generalBehaviorStatements;
 
 import org.example.entities.animals.abstractions.Animal;
 import org.example.entities.map.InteractableCell;
+import org.example.managers.CellManager;
 import org.example.utils.SpaceUtil;
 
 import java.util.concurrent.TimeUnit;
@@ -9,9 +10,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import static org.example.entities.animals.constants.AnimalConstants.HEALTH_AFTER_MOVE;
 
-//TODO: fix bug with move when target cell isn't locked which can cause of ConcurrentModificationException
-
 public class MoveBehavior {
+    private static final CellManager cellManager = CellManager.getInstance();
 
     public void move(Animal animal, InteractableCell fromCell, InteractableCell toCell) {
         ReentrantLock targetLock = toCell.getLock();
@@ -28,8 +28,7 @@ public class MoveBehavior {
         if (gotLock) {
             try {
                 boolean hasSpace = SpaceUtil.availableSpaceForSpecie(toCell, animal);
-//                TODO: optimize this check by change method from.getResidents() to CellManager
-                boolean isHere = fromCell.getResidents().get(animal.getClass()).contains(animal);
+                boolean isHere = cellManager.containsGameObject(fromCell, animal);
                 executeMovementIfValid(animal, fromCell, toCell, hasSpace, isHere);
             } finally {
                 targetLock.unlock();
@@ -39,12 +38,10 @@ public class MoveBehavior {
 
     private static void executeMovementIfValid(Animal animal, InteractableCell fromCell, InteractableCell toCell, boolean hasSpace, boolean isHere) {
         if (hasSpace && isHere) {
-            fromCell.removeGameObjectFromResidents(animal);
-            toCell.addGameObjectToResidents(animal.getClass(), animal);
+            cellManager.removeGameObject(fromCell, animal);
+            cellManager.addGameObject(toCell, animal);
 
-//                  TODO: optimize this by change method animal.setCell() to CellManager
-            animal.setCell(toCell);
-
+//            TODO: move it to DeathService.
             animal.decreaseHealth(HEALTH_AFTER_MOVE);
         }
     }
