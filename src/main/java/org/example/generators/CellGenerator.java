@@ -4,51 +4,52 @@ import org.example.entities.map.Cell;
 import org.example.entities.map.GameField;
 
 public class CellGenerator {
+    private static final int[] ROW_OFF_SETS = {-1, 1, 0, 0};
+    private static final int[] COL_OFF_SETS = {0, 0, -1, 1};
 
-    public CellGenerator() {
-
-    }
-
-//    TODO: Simplify this generate method
     public Cell[][] generateCells(GameField gameField) {
         int width = gameField.getWidth();
         int height = gameField.getHeight();
+        Cell[][] cells = new Cell[height][width];
 
-        Cell[][] cells = new Cell[width][height];
-
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                cells[i][j] = Cell.builder().build();
-            }
-        }
-
+        generateNewCellsForMap(width, height, cells);
         initializeNeighbors(cells, width, height);
 
         return cells;
     }
-//    TODO: Refactor these methods
+
+    private static void generateNewCellsForMap(int width, int height, Cell[][] cells) {
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
+                cells[row][col] = Cell.builder().build();
+            }
+        }
+    }
+
     private void initializeNeighbors(Cell[][] cells, int width, int height) {
-        int[] rowOffSets = {-1, 1, 0, 0};
-        int[] colOffSets = {0, 0, -1, 1};
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
+                assignNeighboursCells(cells, width, height, row, col);
+            }
+        }
+    }
 
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                Cell current = cells[i][j];
+    private void assignNeighboursCells(Cell[][] cells, int width, int height, int i, int j) {
+        Cell current = cells[i][j];
+        for (int k = 0; k < ROW_OFF_SETS.length; k++) {
+            int neighborRow = i + ROW_OFF_SETS[k];
+            int neighborCol = j + COL_OFF_SETS[k];
 
-                for (int k = 0; k < 4; k++) {
-                    int neighborRow = i + rowOffSets[k];
-                    int neighborCol = j + colOffSets[k];
-
-                    if (isValidCell(neighborRow, neighborCol, width, height)) {
-                        current.setNext(cells[neighborRow][neighborCol]);
-                    }
-                }
-
+            if (isValidCell(neighborRow, neighborCol, width, height)) {
+                current.addNeighbor(cells[neighborRow][neighborCol]);
             }
         }
     }
 
     private boolean isValidCell(int row, int col, int width, int height) {
-        return row >= 0 && row < width && col >= 0 && col < height;
+        boolean isRowValid = row >= 0 && row < height;
+        boolean isColValid = col >= 0 && col < width;
+
+        return isRowValid && isColValid;
     }
 }
