@@ -2,7 +2,6 @@ package org.example.generators;
 
 import org.example.abstraction.interfaces.GameObject;
 import org.example.entities.animals.abstractions.Animal;
-import org.example.entities.limits.Limits;
 import org.example.entities.map.Cell;
 import org.example.entities.plants.Plant;
 import org.example.factory.OrganismFactory;
@@ -12,8 +11,8 @@ import org.example.statistic.interfaces.StatsType;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class ResidentsGenerator extends AbstractSubject {
     private final OrganismFactory organismFactory;
@@ -34,47 +33,45 @@ public class ResidentsGenerator extends AbstractSubject {
         HashMap<Class<? extends GameObject>, List<GameObject>> residents = new HashMap<>();
         Map<Class<? extends GameObject>, GameObject> prototypes = organismFactory.getPrototypes();
 
-        Random randomAmount = new Random();
-
-        int maxCount = 0;
-        int count;
+        int maxCapacity = 0;
+        int amountToGenerate;
 
         for (Class<? extends GameObject> prototype : prototypes.keySet()) {
             List<GameObject> organisms = new CopyOnWriteArrayList<>();
             GameObject gameObjectPrototypeInstance = prototypes.get(prototype);
 
-            maxCount = getMaxCount(gameObjectPrototypeInstance, maxCount);
-            count = randomAmount.nextInt(maxCount + 1);
-            
-            for (int i = 0; i < count; i++) {
+            maxCapacity = getMaxCount(gameObjectPrototypeInstance);
+            amountToGenerate = ThreadLocalRandom.current().nextInt(maxCapacity + 1);
+
+            for (int i = 0; i < amountToGenerate; i++) {
                 organisms.add(gameObjectPrototypeInstance.reproduce());
-                
-                if (gameObjectPrototypeInstance instanceof Animal) {
-                    notifyObservers(StatsType.CURRENT_ANIMALS, 1); 
-                } else if (gameObjectPrototypeInstance instanceof Plant) {
-                    notifyObservers(StatsType.CURRENT_PLANTS, 1); 
-                }
+
+                collectStatistic(gameObjectPrototypeInstance);
             }
 
             initializeCells(organisms, cell);
             residents.put(prototype, organisms);
-            cell.setResidents(residents);
+        }
+        cell.setResidents(residents);
+    }
+
+    //    TODO: Probably it would be better to create additional class for statistics methods.
+    private void collectStatistic(GameObject gameObjectPrototypeInstance) {
+        if (gameObjectPrototypeInstance instanceof Animal) {
+            notifyObservers(StatsType.CURRENT_ANIMALS, 1);
+        } else if (gameObjectPrototypeInstance instanceof Plant) {
+            notifyObservers(StatsType.CURRENT_PLANTS, 1);
         }
     }
 
-    private int getMaxCount(GameObject gameObjectPrototypeInstance, int maxCount) {
-        Limits limits = null;
-
-        if (gameObjectPrototypeInstance instanceof Animal animal) {
-            limits = animal.getLimits();
+    private int getMaxCount(GameObject gameObjectPrototypeInstance) {
+        int maxAmountPerCell = 0;
+        if (gameObjectPrototypeInstance instanceof Animal animal && animal.getLimits() != null) {
+            maxAmountPerCell = animal.getLimits().getMaxAmount();
         } else if (gameObjectPrototypeInstance instanceof Plant plant) {
-            maxCount = plant.getMaxAmount();
+            maxAmountPerCell = plant.getMaxAmount();
         }
-
-        if (limits != null) {
-            maxCount = limits.getMaxAmount();
-        }
-        return maxCount;
+        return maxAmountPerCell;
     }
 
     private void initializeCells(List<GameObject> organisms, Cell cell) {
