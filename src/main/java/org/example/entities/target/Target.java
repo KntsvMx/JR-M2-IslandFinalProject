@@ -19,21 +19,24 @@ public class Target {
         gameObjectScanner = GameObjectScanner.getInstance();
     }
 
-    private Map<Class<? extends GameObject>, Integer> transformToTargetMatrix() {
+    private Map<Class<? extends GameObject>, Integer> buildClassMatrix() {
         Map<Class<? extends GameObject>, Integer> targetMatrix = new HashMap<>();
-        Set<Class<? extends GameObject>> gameObjectClasses;
         if (stringTargetMatrix != null) {
-            for (Map.Entry<String, Integer> target : stringTargetMatrix.entrySet()) {
-                String targetKey = target.getKey();
-                Integer targetValue = target.getValue();
-                // TODO: getMatchGameObjectClasses don't return set of game objects which use in targetMatrix
-                gameObjectClasses = getMatchGameObjectClasses(targetKey);
-                for (Class<? extends GameObject> gameObjectClass : gameObjectClasses) {
-                    targetMatrix.put(gameObjectClass, targetValue);
-                }
-            }
+            processMatrixConstruction(targetMatrix);
         }
         return targetMatrix;
+    }
+
+    private void processMatrixConstruction(Map<Class<? extends GameObject>, Integer> targetMatrix) {
+        Set<Class<? extends GameObject>> gameObjectClasses;
+        for (Map.Entry<String, Integer> target : stringTargetMatrix.entrySet()) {
+            String targetClassName = target.getKey();
+            Integer eatProbability = target.getValue();
+            gameObjectClasses = getMatchGameObjectClasses(targetClassName);
+            for (Class<? extends GameObject> gameObjectClass : gameObjectClasses) {
+                targetMatrix.put(gameObjectClass, eatProbability);
+            }
+        }
     }
 
     private Set<Class<? extends GameObject>> getMatchGameObjectClasses(String target) {
@@ -44,7 +47,9 @@ public class Target {
     }
 
     public Map<Class<? extends GameObject>, Integer> getTargetMatrix() {
-        targetMatrix = transformToTargetMatrix();
+        if(targetMatrix == null || targetMatrix.isEmpty()) {
+            targetMatrix = buildClassMatrix();
+        }
         return targetMatrix;
     }
 }
