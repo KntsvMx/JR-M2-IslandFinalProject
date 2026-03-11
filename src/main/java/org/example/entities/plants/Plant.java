@@ -6,6 +6,9 @@ import lombok.experimental.SuperBuilder;
 import org.example.entities.interfaces.Eatable;
 import org.example.entities.interfaces.Organism;
 import org.example.entities.map.InteractableCell;
+import org.example.managers.CellManager;
+
+import java.util.concurrent.locks.ReentrantLock;
 
 import static org.example.entities.plants.constants.PlantConstants.DECREASE_HEALTH_OVER_TIME;
 
@@ -16,6 +19,8 @@ import static org.example.entities.plants.constants.PlantConstants.DECREASE_HEAL
 @EqualsAndHashCode
 @ToString
 public abstract class Plant implements Organism, Eatable {
+    private final ReentrantLock lock = new ReentrantLock();
+
 
     @Setter
     @JsonIgnore
@@ -32,12 +37,19 @@ public abstract class Plant implements Organism, Eatable {
 
     @Override
     public void beEaten() {
-        this.setAlive(false);
-        this.setHealth(0);
-//        TODO: implement method which will delete GameObject from cell (performance improvement)
+        lock.lock();
+        try {
+            if(!this.isAlive) return;
+            this.isAlive = false;
+            this.health = 0;
+
+            CellManager.getInstance().removeGameObject(this.getCell(), this);
+        } finally {
+            lock.unlock();
+        }
     }
 
-//    TODO: implement this method into logic of simulation
+    //    TODO: implement this method into logic of simulation
     public void decreaseHealthOverTime() {
         this.setHealth(this.getHealth() - DECREASE_HEALTH_OVER_TIME);
     }

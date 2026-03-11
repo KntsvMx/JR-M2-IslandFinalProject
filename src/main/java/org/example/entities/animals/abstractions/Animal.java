@@ -9,6 +9,7 @@ import org.example.entities.interfaces.Organism;
 import org.example.entities.limits.Limits;
 import org.example.entities.map.InteractableCell;
 import org.example.entities.target.Target;
+import org.example.managers.CellManager;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -55,9 +56,11 @@ public abstract class Animal implements Organism, Movable, Eatable {
     public void beEaten() {
         lock.lock();
         try {
+            if (!this.isAlive) return;
             this.isAlive = false;
             this.health = 0;
-            this.cell.removeGameObjectFromResidents(this);
+            
+            CellManager.getInstance().removeGameObject(this.getCell(), this);
         } finally {
             lock.unlock();
         }
