@@ -5,7 +5,6 @@ import org.example.behaviour.animal.AnimalBehaviour;
 import org.example.behaviour.plant.PlantBehaviour;
 import org.example.entities.animals.abstractions.Animal;
 import org.example.entities.map.Cell;
-import org.example.managers.ThreadPoolManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +31,7 @@ public class CellTask implements Runnable {
             try {
                 processAnimals();
 
-                if (cycleCount % 2 == 0) {
+                if (cycleCount % 4 == 0) {
                     processPlants();
                 }
             } finally {
@@ -49,6 +48,7 @@ public class CellTask implements Runnable {
         plantBehaviour.grow(cell);
     }
 
+//    TODO: move to DeathService
     private void processAnimals() {
         List<Animal> animals = getAllAnimals(cell);
         for (Animal animal : animals) {
@@ -59,6 +59,7 @@ public class CellTask implements Runnable {
         }
     }
 
+//    TODO: move to DeathService for better performance
     private List<Animal> getAllAnimals(Cell cell) {
         List<Animal> allAnimals = new ArrayList<>();
         for (Map.Entry<Class<? extends GameObject>, List<GameObject>> entry : cell.getResidents().entrySet()) {
