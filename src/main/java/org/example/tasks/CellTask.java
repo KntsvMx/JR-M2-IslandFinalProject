@@ -5,11 +5,11 @@ import org.example.behaviour.animal.AnimalBehaviour;
 import org.example.behaviour.plant.PlantBehaviour;
 import org.example.entities.animals.abstractions.Animal;
 import org.example.entities.map.Cell;
+import org.example.managers.ThreadPoolManager;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.locks.Lock;
 
 public class CellTask implements Runnable {
     private final Cell cell;
@@ -32,7 +32,7 @@ public class CellTask implements Runnable {
             try {
                 processAnimals();
 
-                if (cycleCount % 4 == 0) {
+                if (cycleCount % 2 == 0) {
                     processPlants();
                 }
             } finally {
@@ -45,6 +45,7 @@ public class CellTask implements Runnable {
     }
 
     private void processPlants() {
+        System.out.println("Запуск задачи роста растений");
         plantBehaviour.grow(cell);
     }
 

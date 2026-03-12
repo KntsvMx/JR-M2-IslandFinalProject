@@ -7,15 +7,13 @@ import org.example.entities.plants.Plant;
 import org.example.factory.OrganismFactory;
 import org.example.managers.CellManager;
 import org.example.statistic.AbstractSubject;
-import org.example.statistic.interfaces.Observer;
 import org.example.statistic.interfaces.StatsType;
 import org.example.utils.SpaceUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.example.entities.animals.constants.AnimalConstants.*;
+import static org.example.entities.animals.constants.AnimalConstants.HEALTH_AFTER_REPRODUCE;
 
 public class ReproduceBehavior extends AbstractSubject {
     private final CellManager cellManager;
