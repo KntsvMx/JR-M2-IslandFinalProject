@@ -1,37 +1,38 @@
 package org.example.statistic;
 
+import lombok.Getter;
 import lombok.Setter;
 import org.example.statistic.interfaces.Observer;
 import org.example.statistic.interfaces.StatsType;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.LongAdder;
 
 @Setter
 
 public class StatisticMonitor implements Observer {
-    private static StatisticMonitor instance;
+    @Getter
+    private static StatisticMonitor instance = new StatisticMonitor();
 
     private final Map<StatsType, LongAdder> stats = new ConcurrentHashMap<>();
-    private long startTime;
+    private Instant startTime;
+    private Instant endTime;
 
     private StatisticMonitor() {
-        // TODO: Initialization time instantiation from Runner (when simulation starts)
-        this.startTime = System.currentTimeMillis();
-
-        for(StatsType type: StatsType.values()) {
+        for (StatsType type : StatsType.values()) {
             stats.put(type, new LongAdder());
         }
     }
 
-    public static StatisticMonitor getInstance() {
-        if (instance == null) {
-            instance = new StatisticMonitor();
-        }
-        return instance;
+    public void startTimeOfSimulation() {
+        startTime = Instant.now();
+    }
+
+    public void endTimeOfSimulation() {
+        endTime = Instant.now();
     }
 
     @Override
@@ -39,15 +40,10 @@ public class StatisticMonitor implements Observer {
         stats.get(type).add(count);
     }
 
-    public void increment(StatsType type) {
-        update(type, 1);
-    }
-
     public void printStatistics() {
         long currentCycle = stats.get(StatsType.CYCLE_NUMBER).sum();
 
         StringBuilder sb = new StringBuilder();
-        //TODO: Solve cycle count problem
         sb.append("\n====== STATISTICS [Cycle ").append(currentCycle).append("] ======\n");
         sb.append(String.format("Time: %s%n", getTimeFormatted()));
         sb.append("-----------------------------------\n");
@@ -68,19 +64,32 @@ public class StatisticMonitor implements Observer {
         sb.append(String.format("Plants eaten: %d%n", stats.get(StatsType.EATEN_PLANT).sum()));
         sb.append("-----------------------------------\n");
         System.out.print(sb);
+
+        if (endTime != null) {
+            reset();
+        }
     }
 
     private String getTimeFormatted() {
-        long duration = System.currentTimeMillis() - startTime;
-        long minutes = duration / 60000;
-        long seconds = (duration / 1000) % 60;
-        return String.format("%d min %d sec", minutes, seconds);
+        if (endTime != null) {
+            return String.format("%d min %d sec", getMinutes(startTime, endTime), getSeconds(startTime, endTime));
+        }
+
+        return String.format("%d min %d sec", getMinutes(startTime, Instant.now()), getSeconds(startTime, Instant.now()));
+    }
+
+    private long getSeconds(Instant startTime, Instant endTime) {
+        return Duration.between(startTime, endTime).toSecondsPart();
+    }
+
+    private long getMinutes(Instant startTime, Instant endTime) {
+        return Duration.between(startTime, endTime).toMinutes();
     }
 
     public void reset() {
+        startTime = null;
+        endTime = null;
         stats.values().forEach(LongAdder::reset);
-        this.startTime = System.currentTimeMillis();
     }
-
 
 }
