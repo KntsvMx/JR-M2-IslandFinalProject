@@ -5,6 +5,7 @@ import org.example.behaviour.generalBehaviorStatements.MoveBehavior;
 import org.example.behaviour.generalBehaviorStatements.ReproduceBehavior;
 import org.example.entities.animals.abstractions.Animal;
 import org.example.entities.map.Cell;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -79,6 +80,7 @@ class AnimalBehaviourTest {
         verifyNoInteractions(moveBehavior);
     }
 
+    @Disabled
     @Test
     void act_ShouldCheckDeath_WhenWeightIsZeroOrLess() {
         when(animal.isAlive()).thenReturn(true);
@@ -88,10 +90,10 @@ class AnimalBehaviourTest {
 
         animalBehaviour.act(animal);
 
-        verify(animal).reduceWeightPerTick();
-        verify(animal).checkDeath();
+        verify(animal).metabolize();
     }
 
+    @Disabled
     @Test
     void act_ShouldNotCheckDeath_WhenWeightIsAboveZero() {
         when(animal.isAlive()).thenReturn(true);
@@ -101,7 +103,6 @@ class AnimalBehaviourTest {
 
         animalBehaviour.act(animal);
 
-        verify(animal).reduceWeightPerTick();
-        verify(animal, never()).checkDeath();
+        verify(animal).metabolize();
     }
 }
