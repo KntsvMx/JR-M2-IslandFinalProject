@@ -6,7 +6,8 @@ import lombok.experimental.SuperBuilder;
 import org.example.entities.interfaces.Eatable;
 import org.example.entities.interfaces.Organism;
 import org.example.entities.map.InteractableCell;
-import org.example.managers.CellManager;
+import org.example.managers.DeathManager;
+import org.example.statistic.interfaces.StatsType;
 
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -37,27 +38,15 @@ public abstract class Plant implements Organism, Eatable {
 
     @Override
     public void beEaten() {
-        lock.lock();
-        try {
-            if(!this.isAlive) return;
-            this.isAlive = false;
-            this.health = 0;
+        if (!this.isAlive) return;
+        this.isAlive = false;
+        this.health = 0;
 
-            CellManager.getInstance().removeGameObject(this.getCell(), this);
-        } finally {
-            lock.unlock();
-        }
+        DeathManager.getInstant().processDeath(this.getCell(), this, StatsType.EATEN_PLANT);
     }
 
-    //    TODO: implement this method into logic of simulation
-    public void decreaseHealthOverTime() {
+    public boolean decreaseHealthOverTime() {
         this.setHealth(this.getHealth() - DECREASE_HEALTH_OVER_TIME);
+        return this.getHealth() == 0;
     }
-
-//    TODO: move this method to DeathService and make it universal for all organisms.
-//    public void checkDeath() {
-//        if (this.getHealth() <= MINIMAL_HEALTH) {
-//            this.setAlive(false);
-//        }
-//    }
 }
