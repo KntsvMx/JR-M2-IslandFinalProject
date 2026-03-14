@@ -12,17 +12,21 @@ import org.example.entities.animals.abstractions.Herbivore.Herbivore;
 import org.example.entities.map.InteractableCell;
 
 @GameObjectEntity
-@Config(fileName = "model/yamlFormat/Herbivore/horse.yaml")
+@Config(fileName = "model/yamlFormat/Herbivore/boar.yaml")
 @NoArgsConstructor
 @SuperBuilder
 @Setter
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class Horse extends Herbivore {
+public class Boar extends Herbivore {
+    @Override
+    public void move(InteractableCell cell) {
+
+    }
 
     @Override
     public GameObject reproduce() {
-        return Horse.builder()
+        return Boar.builder()
                 .cell(getCell())
                 .limits(getLimits())
                 .target(getTarget())
@@ -32,10 +36,5 @@ public class Horse extends Herbivore {
                 .health(100)
                 .age(1)
                 .build();
-    }
-
-    @Override
-    public void move(InteractableCell cell) {
-
     }
 }

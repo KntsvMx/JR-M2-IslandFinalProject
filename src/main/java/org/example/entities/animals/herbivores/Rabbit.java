@@ -11,31 +11,31 @@ import org.example.abstraction.interfaces.GameObject;
 import org.example.entities.animals.abstractions.Herbivore.Herbivore;
 import org.example.entities.map.InteractableCell;
 
+
 @GameObjectEntity
-@Config(fileName = "model/yamlFormat/Herbivore/horse.yaml")
+@Config(fileName = "model/yamlFormat/Herbivore/rabbit.yaml")
 @NoArgsConstructor
 @SuperBuilder
 @Setter
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class Horse extends Herbivore {
+public class Rabbit extends Herbivore {
+    @Override
+    public void move(InteractableCell cell) {
+
+    }
 
     @Override
     public GameObject reproduce() {
-        return Horse.builder()
+        return Rabbit.builder()
                 .cell(getCell())
                 .limits(getLimits())
                 .target(getTarget())
                 .icon(getIcon())
                 .isAlive(true)
-                .weight(400)
+                .weight(2)
                 .health(100)
                 .age(1)
                 .build();
-    }
-
-    @Override
-    public void move(InteractableCell cell) {
-
     }
 }
