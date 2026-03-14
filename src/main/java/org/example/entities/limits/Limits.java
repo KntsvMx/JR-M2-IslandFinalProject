@@ -3,11 +3,11 @@ package org.example.entities.limits;
 import lombok.Data;
 @Data
 public class Limits {
-    private int maxWeight;
+    private double maxWeight;
     private int maxAmount;
     private int maxSpeed;
     private int maxFood;
     private int maxAge;
-    private int minWeight;
+    private double minWeight;
     private int minHealth;
 }
