@@ -7,8 +7,8 @@ import org.example.behaviour.generalBehaviorStatements.ReproduceBehavior;
 import org.example.entities.animals.abstractions.Animal;
 import org.example.entities.map.InteractableCell;
 import org.example.managers.CellManager;
+import org.example.managers.DeathManager;
 import org.example.statistic.AbstractSubject;
-import org.example.statistic.interfaces.StatsType;
 
 
 public class AnimalBehaviour extends AbstractSubject {
@@ -30,14 +30,18 @@ public class AnimalBehaviour extends AbstractSubject {
         InteractableCell currentCell = cellManager.getAnimalCell(animal);
         InteractableCell targetCell = cellManager.getRandomCellFromClosest(currentCell);
 
-        animal.reduceWeightPerTick();
-
-        eatBehavior.eat(animal, currentCell);
-        if (checkAndProcessDeath(animal, currentCell)) {
+        if (animal.metabolize()) {
+            DeathManager.getInstant().registerDeath(animal, currentCell);
             return;
         }
+
+        eatBehavior.eat(animal, currentCell);
+        if (!animal.isAlive()) return;
+        animal.recoverHealth();
         reproduceBehavior.reproduce(animal, currentCell);
+        if (!animal.isAlive()) return;
         attemptToMove(animal, targetCell, currentCell);
+
     }
 
     private void attemptToMove(Animal animal, InteractableCell targetCell, InteractableCell currentCell) {
@@ -46,20 +50,4 @@ public class AnimalBehaviour extends AbstractSubject {
         }
     }
 
-    private boolean checkAndProcessDeath(Animal animal, InteractableCell cell) {
-        if (animal.isStarving() || animal.isFatallyInjured()) {
-            animal.setAlive(false);
-            cellManager.removeGameObject(cell, animal);
-
-            statisticCollectionDueAnimalsDeath();
-
-            return true;
-        }
-        return false;
-    }
-
-    private void statisticCollectionDueAnimalsDeath() {
-        notifyObservers(StatsType.DIED_ANIMALS, 1);
-        notifyObservers(StatsType.CURRENT_ANIMALS, -1);
-    }
 }

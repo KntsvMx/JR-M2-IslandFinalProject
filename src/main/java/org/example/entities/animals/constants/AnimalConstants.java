@@ -11,7 +11,7 @@ public final class AnimalConstants {
 
     public static final int RECOVERY_AMOUNT = 3;
     public static final int WEIGHT_COST = 1;
-    public static final int MAX_WEIGHT = 100;
+    public static final int MAX_HEALTH = 100;
     public static final int NO_HEALTH = 0;
 
 
