@@ -88,6 +88,7 @@ public class CellManager {
         }
     }
 
+//  TODO: it must be change for better logic (follow up with statisticMonitor (where dead and alive is counted)
     public boolean hasAliveAnimals(InteractableCell cell) {
         for (List<GameObject> list : cell.getResidents().values()) {
             for (GameObject obj : list) {

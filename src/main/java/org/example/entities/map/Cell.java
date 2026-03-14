@@ -4,7 +4,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.example.abstraction.interfaces.GameObject;
-import org.example.entities.animals.abstractions.Animal;
 
 import java.util.ArrayList;
 import java.util.HashMap;
