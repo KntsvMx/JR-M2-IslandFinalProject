@@ -44,7 +44,6 @@ public class CellTask implements Runnable {
     }
 
     private void processPlants() {
-        System.out.println("Запуск задачи роста растений");
         plantBehaviour.grow(cell);
     }
 

@@ -6,7 +6,6 @@ import org.example.managers.CellManager;
 import org.example.managers.DeathManager;
 import org.example.utils.SpaceUtil;
 
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static org.example.entities.animals.constants.AnimalConstants.HEALTH_AFTER_MOVE;
@@ -18,12 +17,7 @@ public class MoveBehavior {
         ReentrantLock targetLock = toCell.getLock();
         boolean gotLock = false;
 
-        try {
-            gotLock = targetLock.tryLock(50, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            return;
-        }
+        gotLock = targetLock.tryLock();
 
 
         if (gotLock) {

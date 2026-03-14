@@ -94,7 +94,6 @@ public class EntityBehaviorManager extends AbstractSubject {
     }
 
     private void checkGameOver(GameField gameField) {
-//        TODO: move isEcosystemDead to DeathService
         if (statisticMonitor.getStats().get(StatsType.CURRENT_ANIMALS).sum() == 0) {
             stopSimulation();
             System.out.println("Game over");
