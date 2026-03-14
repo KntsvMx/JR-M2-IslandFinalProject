@@ -1,0 +1,18 @@
+cell: ~
+limits:
+  maxWeight: 12
+  maxAmount: 20
+  maxSpeed: 4
+  maxFood: 1
+  maxAge: 4
+  minWeight: 2
+  minHealth: 10
+target:
+  stringTargetMatrix:
+    fox: 10
+    rabbit: 90
+    mouse: 90
+    duck: 80
+weight: 6
+health: 100
+age: 2

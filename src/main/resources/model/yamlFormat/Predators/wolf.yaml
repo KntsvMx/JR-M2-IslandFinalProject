@@ -1,15 +1,15 @@
 cell: ~
 limits:
-  maxWeight: 50
-  maxAmount: 15
+  maxWeight: 70
+  maxAmount: 30
   maxSpeed: 3
   maxFood: 8
-  maxAge: 10
-  minWeight: 2
-  minHealth: 5
+  maxAge: 8
+  minWeight: 5
+  minHealth: 10
 target:
   stringTargetMatrix:
-      horse: 40
+    horse: 10
       deer: 15
       rabbit: 60
       mouse: 80
@@ -18,6 +18,6 @@ target:
       boar: 15
       buffalo: 10
       duck: 40
-weight: 30
+weight: 50
 health: 100
 age: 2

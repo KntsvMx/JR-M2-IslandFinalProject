@@ -1,0 +1,24 @@
+cell: ~
+limits:
+  maxWeight: 700
+  maxAmount: 5
+  maxSpeed: 2
+  maxFood: 80
+  maxAge: 6
+  minWeight: 50
+  minHealth: 15
+target:
+  stringTargetMatrix:
+    boa: 80
+    hoarse: 40
+    deer: 80
+    rabbit: 80
+    mouse: 90
+    goat: 70
+    sheep: 70
+    boar: 50
+    buffalo: 20
+    duck: 10
+weight: 500
+health: 100
+age: 2
