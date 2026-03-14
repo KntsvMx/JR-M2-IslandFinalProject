@@ -9,6 +9,7 @@ public enum StatsType {
 
     CURRENT_ANIMALS,
     CURRENT_PLANTS,
+    DIED_PLANT,
 
     CYCLE_NUMBER
 }

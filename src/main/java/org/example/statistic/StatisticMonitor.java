@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.LongAdder;
 public class StatisticMonitor implements Observer {
     @Getter
     private static StatisticMonitor instance = new StatisticMonitor();
-
+    @Getter
     private final Map<StatsType, LongAdder> stats = new ConcurrentHashMap<>();
     private Instant startTime;
     private Instant endTime;
@@ -62,6 +62,7 @@ public class StatisticMonitor implements Observer {
         sb.append(String.format("Died (Hunger): %d%n", stats.get(StatsType.DIED_ANIMALS).sum()));
         sb.append(String.format("Animals eaten: %d%n", stats.get(StatsType.KILLED_ANIMALS).sum()));
         sb.append(String.format("Plants eaten: %d%n", stats.get(StatsType.EATEN_PLANT).sum()));
+        sb.append(String.format("Plant died: %d%n", stats.get(StatsType.DIED_PLANT).sum()));
         sb.append("-----------------------------------\n");
         System.out.print(sb);
 
