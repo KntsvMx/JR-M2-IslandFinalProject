@@ -2,11 +2,12 @@ package org.example.behaviour.generalBehaviorStatements;
 
 import org.example.abstraction.interfaces.GameObject;
 import org.example.entities.animals.abstractions.Animal;
+import org.example.entities.animals.constants.AnimalConstants;
 import org.example.entities.map.InteractableCell;
 import org.example.entities.plants.Plant;
 import org.example.managers.CellManager;
+import org.example.managers.DeathManager;
 import org.example.statistic.AbstractSubject;
-import org.example.statistic.interfaces.StatsType;
 
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,9 @@ public class EatBehavior extends AbstractSubject {
             if (diceRoll <= chanceToEat) {
                 performEat(animal, victim, cell);
             }
+            if (animal.sufferInjury(AnimalConstants.HEALTH_AFTER_HUNT)) {
+                DeathManager.getInstant().registerDeath(animal, cell);
+            }
         }
     }
 
@@ -66,19 +70,15 @@ public class EatBehavior extends AbstractSubject {
         predator.setHealth(newHealth);
         predator.setWeight(newWeight);
 
-        notifyObserver(victim);
+        processVictimDeath(victim);
         cellManager.removeGameObject(cell, victim);
     }
 
-    private void notifyObserver(GameObject victim) {
+    private void processVictimDeath(GameObject victim) {
         if (victim instanceof Animal) {
             ((Animal) victim).beEaten();
-            notifyObservers(StatsType.KILLED_ANIMALS, 1);
-            notifyObservers(StatsType.CURRENT_ANIMALS, -1);
         } else {
             ((Plant) victim).beEaten();
-            notifyObservers(StatsType.EATEN_PLANT, 1);
-            notifyObservers(StatsType.CURRENT_PLANTS, -1);
         }
     }
 

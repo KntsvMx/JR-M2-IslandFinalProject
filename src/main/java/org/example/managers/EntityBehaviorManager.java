@@ -59,7 +59,6 @@ public class EntityBehaviorManager extends AbstractSubject {
         incrementCycleCount();
 
         checkGameOver(gameField);
-
     }
 
     private List<Future<?>> submitCellTasks(GameField gameField) {
@@ -90,14 +89,13 @@ public class EntityBehaviorManager extends AbstractSubject {
         printStatistic();
     }
 
-    //    TODO: realize statistic observing and print
     private void printStatistic() {
         statisticMonitor.printStatistics();
     }
 
     private void checkGameOver(GameField gameField) {
 //        TODO: move isEcosystemDead to DeathService
-        if (gameField.isEcosystemDead()) {
+        if (statisticMonitor.getStats().get(StatsType.CURRENT_ANIMALS).sum() == 0) {
             stopSimulation();
             System.out.println("Game over");
         }

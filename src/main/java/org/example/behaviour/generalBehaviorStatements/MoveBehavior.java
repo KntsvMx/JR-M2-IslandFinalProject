@@ -3,6 +3,7 @@ package org.example.behaviour.generalBehaviorStatements;
 import org.example.entities.animals.abstractions.Animal;
 import org.example.entities.map.InteractableCell;
 import org.example.managers.CellManager;
+import org.example.managers.DeathManager;
 import org.example.utils.SpaceUtil;
 
 import java.util.concurrent.TimeUnit;
@@ -41,8 +42,9 @@ public class MoveBehavior {
             cellManager.removeGameObject(fromCell, animal);
             cellManager.addGameObject(toCell, animal);
 
-//            TODO: move it to DeathService.
-            animal.decreaseHealth(HEALTH_AFTER_MOVE);
+            if (animal.sufferInjury(HEALTH_AFTER_MOVE)) {
+                DeathManager.getInstant().registerDeath(animal, toCell);
+            }
         }
     }
 }

@@ -6,6 +6,7 @@ import org.example.entities.map.InteractableCell;
 import org.example.entities.plants.Plant;
 import org.example.factory.OrganismFactory;
 import org.example.managers.CellManager;
+import org.example.managers.DeathManager;
 import org.example.statistic.AbstractSubject;
 import org.example.statistic.interfaces.StatsType;
 import org.example.utils.SpaceUtil;
@@ -48,14 +49,17 @@ public class ReproduceBehavior extends AbstractSubject {
 
                 cellManager.addGameObject(currentCell, baby);
 
-                animal.decreaseHealth(HEALTH_AFTER_REPRODUCE);
-                partner.decreaseHealth(HEALTH_AFTER_REPRODUCE);
+                if (animal.sufferInjury(HEALTH_AFTER_REPRODUCE)) {
+                    DeathManager.getInstant().registerDeath(animal, currentCell);
+                }
+                if (partner.sufferInjury(HEALTH_AFTER_REPRODUCE)) {
+                    DeathManager.getInstant().registerDeath(partner, currentCell);
+                }
 
                 notifyObservers(StatsType.BORN_ANIMALS, 1);
                 notifyObservers(StatsType.CURRENT_ANIMALS, 1);
             }
         }
-
     }
 
     private void reproducePlant(Plant plantGameObject, InteractableCell currentCell) {
@@ -85,8 +89,8 @@ public class ReproduceBehavior extends AbstractSubject {
     }
 
     private boolean canReproduce(Animal parent1, Animal parent2) {
-        int minHealth = 50;
+        int minHealthForReproduce = 50;
 
-        return parent1.getHealth() >= minHealth && parent2.getHealth() >= minHealth;
+        return parent1.getHealth() >= minHealthForReproduce && parent2.getHealth() >= minHealthForReproduce;
     }
 }
