@@ -1,0 +1,15 @@
+cell: ~
+limits:
+  maxWeight: 1000
+  maxAmount: 10
+  maxSpeed: 3
+  maxFood: 100
+  maxAge: 10
+  minWeight: 100
+  minHealth: 10
+target:
+  stringTargetMatrix:
+    grass: 100
+weight: 700
+health: 100
+age: 2

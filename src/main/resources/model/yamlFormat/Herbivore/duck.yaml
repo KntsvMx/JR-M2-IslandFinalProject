@@ -1,15 +1,16 @@
 cell: ~
 limits:
-  maxWeight: 600
-  maxAmount: 20
+  maxWeight: 3
+  maxAmount: 200
   maxSpeed: 4
-  maxFood: 60
-  maxAge: 8
-  minWeight: 10
+  maxFood: 0.15
+  maxAge: 3
+  minWeight: 0.5
   minHealth: 5
 target:
   stringTargetMatrix:
     grass: 100
-weight: 400
+    caterpillar: 90
+weight: 1
 health: 100
 age: 2
