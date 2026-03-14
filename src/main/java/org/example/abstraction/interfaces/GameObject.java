@@ -5,4 +5,5 @@ import org.example.entities.map.InteractableCell;
 
 public interface GameObject extends Reproducible {
     void setCell(InteractableCell cell);
+
 }
